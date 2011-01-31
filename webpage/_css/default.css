@@ -1,0 +1,243 @@
+@charset "UTF-8";
+
+/*****************************/
+/* All content, code and images written and created by Graham Swan (thinkswan@gmail.com), 2010.
+/*****************************/
+
+/*****************************/
+/* Main Styles
+/*****************************/
+
+body {
+	font: .95em/1.4em "Helvetica Neue", sans-serif;
+	color: #000;
+}
+p {
+	margin: 5px 30px 10px 11px;
+}
+ul {
+	list-style: square;
+	margin: 5px 30px 10px;
+}
+li {
+	margin: 5px 0;
+}
+.floatLeft {
+	float: left;
+}
+.floatRight {
+	float: right;
+}
+.gutter {
+	margin-right: 23px;
+}
+.clear {
+	clear: both;
+}
+.center {
+	display: block;
+	margin: 0 auto;
+}
+.topMargin {
+	margin-top: 30px;
+}
+.topMarginSmall {
+	margin-top: 10px;
+}
+.indent {
+	padding: 0 10px 10px;
+}
+.highlight {
+	color: #f00;
+}
+.hidden {
+	display: none;
+}
+h2 {
+	font-weight: bold;
+	font-size: 170%;
+	background: url(../_images/line.png) no-repeat bottom left;
+	padding-bottom: 3px;
+	margin-bottom: 10px;
+}
+h3 {
+	margin: 0 30px 0 11px;
+	font-size: 120%;
+}
+
+/*****************************/
+/* Links
+/*****************************/
+
+a, a:hover, a:visited {
+	color: #3e8de4;
+}
+a:active {
+	position: relative;
+	top: 1px;
+}
+h2 a, h2 a:visited, h2 a:active {
+	float: right;
+	margin-right: 34px;
+	text-decoration: none;
+	color: #000;
+	font-size: 50%;
+}
+h2 a:hover {
+	color: #000;
+	text-decoration: underline;
+}
+
+/*****************************/
+/* Container
+/*****************************/
+
+div#container {
+	width: 903px;
+	margin: 0 auto;
+}
+div#mainBox {
+	margin: 0 30px;
+	padding: 0 16px;
+	width: 843px;
+	background: url(../_images/box_bg.png) repeat-y;
+}
+div#mainBox > img {
+	padding-bottom: 10px;
+}
+
+/*****************************/
+/* Navbar
+/*****************************/
+
+div.navbar {
+	background: #a6cdf8;
+	border-top: 1px solid #000;
+	border-bottom: 1px solid #000;
+	padding: 8px 0;
+	margin-right: 34px;
+	text-align: center;
+}
+div.navbar a, div#navbar a:visited, div#navbar a:active {
+	color: #000;
+	padding: 9px 7px;
+	text-decoration: none;
+	font-weight: bold;
+}
+div.navbar a:hover {
+	background: #7eb8f8;
+}
+
+/*****************************/
+/* Notice
+/*****************************/
+
+div.notice {
+	margin: 0 34px 5px 0;
+	padding: 10px;
+	border-top: 2px solid #58bd31;
+	border-bottom: 2px solid #58bd31;
+	background: #c6fbb1;
+	position: relative;
+}
+div.notice:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+div.notice a {
+	color: #000;
+}
+div.notice p {
+	margin: 0 0 10px 0;
+	padding: 0;
+	font-weight: bold;
+	font-size: 170%;
+}
+div.notice img {
+	position: absolute;
+	top: -15px;
+	right: -10px;
+}
+div.yellow {
+	border-color: #fc3;
+	background-color: #ff6;
+}
+ 
+/*****************************/
+/* Columns
+/*****************************/
+
+p.twoCol {
+	width: 380px;
+	float: left;
+}
+p.fourCol {
+	width: 205px;
+	float: left;
+}
+
+/*****************************/
+/* Instructions
+/*****************************/
+
+span.number {
+	float: left;
+	font-weight: bold;
+	font-size: 170%;
+	padding: 0 10px 10px;
+}
+span.instruction {
+	float: left;
+	padding-right: 30px;
+}
+p.note {
+	margin: 0 41px 10px;
+}
+span.code {
+	font-family: "Courier New";
+}
+
+/*****************************/
+/* Facebook Comments
+/*****************************/
+
+p.comments {
+	margin: 0 34px 10px 0;
+	padding-bottom: 3px;
+	font-size: 120%;
+	font-weight: bold;
+	border-bottom: 2px solid #000;
+}
+
+/*****************************/
+/* Donate Link
+/*****************************/
+
+form#paypal {
+	margin: 5px 30px 10px 11px;
+}
+form#paypal input[type=text], form#paypal select {
+	width: 200px;
+	padding: 3px;
+	margin-bottom: 10px;
+	color: #333;
+}
+form#paypal input[type=text] {
+	background: url(../_images/form_bg.png) repeat-x;
+	border: 1px solid #c8c8c8;
+	font-size: 1em;
+}
+form#paypal select {
+	font-size: 2em;
+}
+.donateButton {
+	float: left;
+	padding: 7px 10px 10px 0;
+}
+span.donate {
+	float: left;
+	padding: 0;
+}
