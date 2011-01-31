@@ -133,7 +133,7 @@
 		global $fbComments_settings;
 		
 		$fb = fbComments_getFbApi();
-		$posts = get_posts(array('numberposts' => -1)); // Retrieve all comments
+		$posts = get_posts(array('numberposts' => -1)); // Retrieve all posts
 		
 		if ($posts) {
 			fbComments_log(sprintf('    Looping through %d posts', count($posts)));
@@ -263,8 +263,9 @@
 	    			echo "\n<div id='fb-root'></div>
 <script src='http://connect.facebook.net/{$fbComments_settings['fbComments_language']}/all.js#appId={$fbComments_settings['fbComments_appId']}&amp;xfbml=1' type='text/javascript'></script>\n";
 				}
+			}
 
-		echo "
+			echo "
 <script type='text/javascript'>
 	j = jQuery.noConflict();
 	
@@ -279,8 +280,8 @@
 			}
 		});\n";
 		
-		if ($fbComments_settings['fbComments_notify']) {
-			echo "
+			if ($fbComments_settings['fbComments_notify']) {
+				echo "
 		console.log('fbComments:     Making AJAX call to send email notification');
 		j.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'sendNotification', xid: '$xid', postTitle: '$postTitle', postUrl: '$postUrl' }, function(resp) {
 			if (resp === 'true') {
@@ -289,15 +290,13 @@
 				console.log('fbComments:     FAILED to send email notification');
 			}
 		});";
-		}
+			}
 		
-		echo "
+			echo "
 	};
 
 	FB.Event.subscribe('comments.add', addedComment);
 </script>\n";
-
-	    	}
 	    	
 	    	echo "\n<div id='fbComments' style='{$fbComments_settings['fbComments_containerCss']}'>\n";
 	    	
