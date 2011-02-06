@@ -49,10 +49,29 @@
 		$fbComments_settings['fbComments_title'] = esc_html(stripslashes($_POST['fbComments_title']));
 		update_option('fbComments_title', $fbComments_settings['fbComments_title']);
 		
-		$fbComments_settings['fbComments_numPosts'] = intval($_POST['fbComments_numPosts']);
-		update_option('fbComments_numPosts', $fbComments_settings['fbComments_numPosts']);
+		if (intval($_POST['fbComments_numPosts']) > 0) {
+			$fbComments_settings['fbComments_numPosts'] = intval($_POST['fbComments_numPosts']);
+			update_option('fbComments_numPosts', $fbComments_settings['fbComments_numPosts']);
+		} else {
+			$fbComments_settings['fbComments_numPosts'] = get_option('fbComments_numPosts');
+		}
 		
-		$fbComments_settings['fbComments_width'] = intval($_POST['fbComments_width']);
+		// If width was entered as a percentage, ensure it's greater than 0%
+		if (strpos($_POST['fbComments_width'], '%') !== false) {
+			$width = substr($_POST['fbComments_width'], 0, strpos($_POST['fbComments_width'], '%'));
+			
+			if (intval($width) > 0) {
+				$fbComments_settings['fbComments_width'] = intval($width) . '%';
+			} else {
+				$fbComments_settings['fbComments_width'] = get_option('fbComments_width');
+			}
+        } else { // If width was entered as a pixel value, ensure it's greater than 0px
+        	if (intval($_POST['fbComments_width']) > 0) {
+				$fbComments_settings['fbComments_width'] = intval($_POST['fbComments_width']);
+			} else {
+				$fbComments_settings['fbComments_width'] = get_option('fbComments_width');
+			}
+        }
 		update_option('fbComments_width', $fbComments_settings['fbComments_width']);
 		
 		$fbComments_settings['fbComments_displayLocation'] = (isset($_POST['fbComments_displayLocation'])) ? $_POST['fbComments_displayLocation'] : $fbComments_defaults['fbComments_displayLocation'];
@@ -260,7 +279,7 @@
 				<p><?php _e('Facebook Comments Section Title: '); ?><input type="text" name="fbComments_title" value="<?php echo $fbComments_settings['fbComments_title']; ?>" size="30"><em><?php _e(' (This is the title text displayed above the Facebook commenting section)'); ?></em></p>
 				<p><input type="checkbox" id="fbComments_displayTitle" name="fbComments_displayTitle" value="true" <?php if ($fbComments_settings['fbComments_displayTitle']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_displayTitle"><?php _e(' Display the Facebook comments title (set above)'); ?></label></p>
 				<p><?php _e('Number of Posts to Display: '); ?><input type="text" name="fbComments_numPosts" value="<?php echo $fbComments_settings['fbComments_numPosts']; ?>" size="5" maxlength="3"></p>
-				<p><?php _e('Width of Comments Box (px): '); ?><input type="text" name="fbComments_width" value="<?php echo $fbComments_settings['fbComments_width']; ?>" size="5" maxlength="4"></p>
+				<p><?php _e('Width of Comments Box (px or %): '); ?><input type="text" name="fbComments_width" value="<?php echo $fbComments_settings['fbComments_width']; ?>" size="5" maxlength="4"><em><?php _e(' (Eg: \'500\' corresponds to 500px. \'100%\' corresponds to, well, 100%.)'); ?></em></p>
 				<p><?php _e('Display Facebook comments before or after WordPress comments? '); ?>
 					<select name="fbComments_displayLocation" disabled="disabled">
 						<option value="before"<?php if ($fbComments_settings['fbComments_displayLocation'] == 'before') echo ' selected="selected"'; ?>>Before</option>

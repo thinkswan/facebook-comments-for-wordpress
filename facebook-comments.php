@@ -80,7 +80,7 @@
 		'fbComments_displayTitle'				=> true,
 		'fbComments_title'						=> 'Facebook comments:',
 		'fbComments_numPosts'					=> 10,
-		'fbComments_width'						=> 500,
+		'fbComments_width'						=> '100%',
 		'fbComments_displayLocation'			=> 'before',
 		'fbComments_displayPagesOrPosts'		=> 'posts',
 		'fbComments_reverseOrder'				=> false,

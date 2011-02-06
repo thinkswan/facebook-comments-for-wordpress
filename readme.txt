@@ -47,7 +47,7 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 = 2.0 =
 * Option: Send email notifications to the site admin whenever a Facebook comment is posted
 * Option: Ability to load the JavaScript SDK the old way (for those of you who experienced issues with v1.6)
-* Option: Ability to set the comment box width to `100%`
+* Option: Ability to set the comment box width to a percentage **or** a pixel value
 * Bugfix: Whitespace is now trimmed from the application ID, the application secret, all CSS styles and the XID to prevent loading issues
 * Bugfix: Links on the plugin settings page have been updated to point to the correct information on the website now
 * Bugfix: Cleaned up various parts of the code (no more PHP notices)
@@ -116,7 +116,7 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 == Upgrade Notice ==
 
 = 2.0 =
-This update introduces both comment count caching (no more slow load times on the main page) and email notifications whenever a Facebook comment is posted. It also includes an option to load the JavaScript SDK the old way (for those of you who experienced issues with v1.6).
+This update introduces both comment count caching (no more slow load times on the main page) and email notifications whenever a Facebook comment is posted. It also includes an option to load the JavaScript SDK the old way (for those of you who experienced issues with v1.6) and an option to set the comment box width to a percentage or a pixel value.
 
 = 1.6 =
 This update introduces the highly-anticipated combined comment counts feature.
