@@ -63,16 +63,24 @@
 			<div class="notice">
 				<img src="_images/notice_link.png" width="64" height="64" />
 				<p>Version 2.0 is out!</p>
-				At long last, the new version of the plugin has been released. Important changes in this release include:
+				At long last, <strong>the new version of the plugin has been released</strong>. Important changes in this release include:
 				
 				<ul>
 					<li>Option to send email notifications to the site admin whenever a comment is posted</li>
 					<li>Ability to load the JavaScript SDK the old way (for those of you who experienced issues with v1.6)</li>
 					<li>Comment counts are now cached (no more slow load times on the main page)</li>
-					<li>Ability to set the comment box width to 100%</li>
+					<li>Ability to set the comment box width to a percentage <em>or</em> pixel value</li>
 				</ul>
 				
-				You can <a href="http://wordpress.org/extend/plugins/facebook-comments-for-wordpress/">download the new version here</a> or directly through your WordPress backend.
+				You can <a href="http://wordpress.org/extend/plugins/facebook-comments-for-wordpress/">download the new version here</a> or directly through your WordPress backend.<br /><br />
+				
+				<strong>If your combined comment counts aren't working</strong>, ensure your application secret is set correctly. If it's not, all Facebook API calls will return an error and the plugin won't be able to retrieve the proper counts.<br /><br />
+				
+				<strong>If your comments are being replaced with a Facebook error page</strong>, try loading the JavaScript the old way by checking the appropriate option on the plugin's settings page.<br /><br />
+				
+				And lastly, <strong>I will no longer be maintaining this plugin</strong>. It's time for me to move on to new projects in the mobile space. If anyone would like to extend the plugin, you can do so by <a href="https://github.com/thinkswan/Facebook-Comments-for-WordPress">forking the project on GitHub</a> and letting me know when you'd like an update pushed to WordPress. If someone takes up these reigns, I'll eventually just give them full control of the plugin page to take it where they see fit.<br /><br />
+				
+				As a result of these plans, please do not email me or send me Facebook or Twitter messages regarding bugs and feature requests any longer. You can always find help by <a href="#demo">posting in the Live Demo</a> below or by <a href="http://wordpress.org/tags/facebook-comments-for-wordpress?forum_id=10">leaving a message in the WordPress forums</a>.
 			</div>
 			
 			<!-- What Is It? -->
@@ -243,9 +251,14 @@
 			</ul>
 			
 			<h3>Combined comment counts aren't working on my site.</h3>
-			<p>The combined comment count is passed through WordPress' <span class="code">get_comments_number()</span> function.</p>
+			<p>Ensure your application secret is set correctly. If it's not, all Facebook API calls will return an error and the plugin won't be able to retrieve the proper counts.</p>
+			
+			<p>If you're sure your application secret is correct, note that the combined comment count is passed through WordPress' <span class="code">get_comments_number()</span> function.</p>
 
-      <p>If you're using a custom theme, you may have to modify your <strong>comments.php</strong> file (located inside your theme's directory) to include a call to <span class="code">get_comments_number()</span> where your comments are being listed.</p>
+      		<p>If you're using a custom theme, you may have to modify your <strong>comments.php</strong> file (located inside your theme's directory) to include a call to <span class="code">get_comments_number()</span> where your comments are being listed.</p>
+      		
+      		<h3>I'm seeing a Facebook error page in the iframe instead of my comments.</h3>
+			<p>This generally happens due to an issue loading Facebook's JavaScript library. You can attempt to remedy this issue by loading the library the old way. This can be done by checking <strong>The old way</strong> option on the plugin's settings page.</p>
 			
 			<h3>Can I see the names and profile pictures of the people who Like a post?</h3>
 			<p>Facebook only allows you to see the names and pictures of people that you're friends with.</p>
@@ -377,7 +390,9 @@
 			<br class="clear" />
 			<a name="contact"></a><h2 class="topMargin">Contact the Author<a href="#top">&uarr;Top</a></h2>
 			
-			<span class="instruction indent">You can get in touch with me via <strong><a href="mailto:thinkswan@gmail.com">email</a></strong>, <strong><a href="http://facebook.com/thinkswan">Facebook</a></strong>, <strong><a href="http://twitter.com/thinkswan">Twitter</a></strong> or the <strong><a href="http://grahamswan.com/#contact">contact form</a></strong> on my website. If you're requesting assistance, <strong><em>please include a link to a page where the plugin is currently enabled in your message</em></strong>.</span>
+			<span class="instruction indent">I am no longer actively maintaining this plugin, so please do not contact me with bugs or feature requests any longer.<br /><br />
+			
+			You can always find help by posting in the <strong><a href="#demo">Live Demo</a></strong> below or by leaving a message in the <strong><a href="http://wordpress.org/tags/facebook-comments-for-wordpress?forum_id=10">WordPress forums</a></strong>.</span>
 			
 			<!-- Donate -->
 			<br class="clear" />
