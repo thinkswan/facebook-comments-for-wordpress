@@ -74,6 +74,8 @@
 				
 				You can <a href="http://wordpress.org/extend/plugins/facebook-comments-for-wordpress/">download the new version here</a> or directly through your WordPress backend.<br /><br />
 				
+				<strong>If the new version isn't working for you</strong>, you can always <a href="http://wordpress.org/extend/plugins/facebook-comments-for-wordpress/download/">download a previous version here</a>. The comments are included via JavaScript, so certain browsers may not play nicely as it stands right now.<br /><br />
+				
 				<strong>If your combined comment counts aren't working</strong>, ensure your application secret is set correctly. If it's not, all Facebook API calls will return an error and the plugin won't be able to retrieve the proper counts.<br /><br />
 				
 				<strong>If your comments are being replaced with a Facebook error page</strong>, try loading the JavaScript the old way by checking the appropriate option on the plugin's settings page.<br /><br />
