@@ -4,12 +4,12 @@
 	Plugin URI: http://www.grahamswan.com/facebook-comments
 	Description: Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, etc.
 	Author: Graham Swan
-	Version: 2.0
+	Version: 2.1
 	Author URI: http://www.grahamswan.com/
 	*/
 	
 	define('FBCOMMENTS_ERRORS', false); // Set to true while developing, false for a release
-	define('FBCOMMENTS_VER', '2.0');
+	define('FBCOMMENTS_VER', '2.1');
 	define('FBCOMMENTS_AUTHOR', 'Graham Swan');
 	define('FBCOMMENTS_WEBPAGE', 'http://grahamswan.com/facebook-comments/');
 	define('FBCOMMENTS_PATH', plugins_url('facebook-comments-for-wordpress/'));
@@ -80,7 +80,7 @@
 		'fbComments_displayTitle'				=> true,
 		'fbComments_title'						=> 'Facebook comments:',
 		'fbComments_numPosts'					=> 10,
-		'fbComments_width'						=> '100%',
+		'fbComments_width'						=> 500,
 		'fbComments_displayLocation'			=> 'before',
 		'fbComments_displayPagesOrPosts'		=> 'posts',
 		'fbComments_reverseOrder'				=> false,
@@ -99,6 +99,7 @@
 	 **********************************/
 	
 	register_activation_hook(__FILE__, 'fbComments_init');
+	register_deactivation_hook(__FILE__, 'fbComments_deactivate');
 	register_uninstall_hook(__FILE__, 'fbComments_uninit');
 	
 	// Display a message prompting the user to enter a Facebook application ID and secret upon plugin activation

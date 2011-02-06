@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=7QKHF
 Tags: comments, facebook, social graph, posts, pages, discussion, facebook comments
 Requires at least: 2.9.2
 Tested up to: 3.0.4
-Stable tag: 2.0
+Stable tag: 2.1
 
 Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, etc.
 
@@ -29,7 +29,7 @@ Features:
 
 == Installation ==
 
-1. Unzip `facebook-comments-for-wordpress.2.0.zip` to your `/wp-content/plugins/` directory
+1. Unzip `facebook-comments-for-wordpress.2.1.zip` to your `/wp-content/plugins/` directory
 2. Activate the plugin through the `Plugins` menu in WordPress (depending on the number of posts on your site, activation may take a moment because the plugin is caching all of your comment counts)
 3. Setup the plugin options by using the `Facebook Comments` page (located under the `Settings` menu)
 
@@ -44,10 +44,16 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 
 == Changelog ==
 
+= 2.1 =
+* Bugfix: Removed the option to set widths as a percentage because the JavaScript was breaking the plugin for almost everyone (no more multiple inclusions)
+* Bugfix: Switched from PHP's default mail() function to WordPress' built-in wp_mail() function for sending email notifications
+* Bugfix: Removed JavaScript logging to ensure the plugin works in Firefox and IE again (these browsers do not have `console.log` defined unless Firebug is installed)
+* Your current XID will now be emailed to you when you deactivate the plugin (this allows you to retrieve your site's comments should you ever activate the plugin again)
+
 = 2.0 =
 * Option: Send email notifications to the site admin whenever a Facebook comment is posted
 * Option: Ability to load the JavaScript SDK the old way (for those of you who experienced issues with v1.6)
-* Option: Ability to set the comment box width to a percentage **or** a pixel value
+* Option: Ability to set the comment box width to `100%`
 * Bugfix: Whitespace is now trimmed from the application ID, the application secret, all CSS styles and the XID to prevent loading issues
 * Bugfix: Links on the plugin settings page have been updated to point to the correct information on the website now
 * Bugfix: Cleaned up various parts of the code (no more PHP notices)
@@ -115,8 +121,11 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 
 == Upgrade Notice ==
 
+= 2.1 =
+This update fixes a bug that caused the plugin to break in Firefox, as well as a bug that caused the comments to be included multiple times on some themes. It also removes the width as a percentage feature because it crippled the plugin for nearly everyone.
+
 = 2.0 =
-This update introduces both comment count caching (no more slow load times on the main page) and email notifications whenever a Facebook comment is posted. It also includes an option to load the JavaScript SDK the old way (for those of you who experienced issues with v1.6) and an option to set the comment box width to a percentage or a pixel value.
+This update introduces both comment count caching (no more slow load times on the main page) and email notifications whenever a Facebook comment is posted. It also includes an option to load the JavaScript SDK the old way (for those of you who experienced issues with v1.6) and an option to set the comment box width to 100%.
 
 = 1.6 =
 This update introduces the highly-anticipated combined comment counts feature.

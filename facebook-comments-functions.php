@@ -23,7 +23,35 @@
 		}
 	}
 	
-	// Remove database entries upon plugin deactivation
+	// Email the site owner the current XID upon plugin deactivation
+	function fbComments_deactivate() {
+		global $fbComments_settings;
+		
+		$to = get_bloginfo('admin_email');
+    	$subject = "[Facebook Comments for WordPress] Your current XID";
+    	
+    	$message = "Thanks for trying out Facebook Comments for WordPress!\n\n" .
+    			   "We just thought you'd like to know that your current XID is: {$fbComments_settings['fbComments_xid']}.\n\n" .
+    			   "This should be saved in your website's database, but in case it gets lost, you'll need this unique key to retrieve your comments should you ever choose to activate this plugin again.\n\n" .
+    			   "Have a great day!";
+    	
+    	// Wordwrap the message and strip slashes that may have wrapped quotes
+		$message = stripslashes(wordwrap($message, 70));
+		
+    	$headers = "From: Facebook Comments for WordPress <$to>\r\n" .
+            	   "Reply-To: $to\r\n" .
+            	   "X-Mailer: PHP" . phpversion();
+        
+        // Send the email notification
+        fbComments_log("Sending XID via email to $to");
+        if (wp_mail($to, $subject, $message, $headers)) {
+            fbComments_log(sprintf('    Sent XID via email to %s', $to));
+		} else {
+		    fbComments_log(sprintf('    FAILED to send XID via email to %s', $to));
+		}
+	}
+	
+	// Remove database entries upon the plugin being uninstalled
 	function fbComments_uninit() {
 		global $fbComments_optionKeys;
 		
@@ -339,24 +367,24 @@
 	j = jQuery.noConflict();
 	
 	var addedComment = function(response) {
-		console.log('fbComments: Caught added comment');
-		console.log('fbComments:     Making AJAX call to update Facebook comment count');
+		//console.log('fbComments: Caught added comment');
+		//console.log('fbComments:     Making AJAX call to update Facebook comment count');
 		j.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'addComment', xid: '$xid' }, function(resp) {
 			if (resp === 'true') {
-				console.log('fbComments:     Updated and cached Facebook comment count for post with xid=$xid');
+				//console.log('fbComments:     Updated and cached Facebook comment count for post with xid=$xid');
 			} else {
-				console.log('fbComments:     FAILED to update Facebook comment count for post with xid=$xid');
+				//console.log('fbComments:     FAILED to update Facebook comment count for post with xid=$xid');
 			}
 		});\n";
 		
 		if ($fbComments_settings['fbComments_notify']) {
 			echo "
-		console.log('fbComments:     Making AJAX call to send email notification');
+		//console.log('fbComments:     Making AJAX call to send email notification');
 		j.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'sendNotification', xid: '$xid', postTitle: '$postTitle', postUrl: '$postUrl' }, function(resp) {
 			if (resp === 'true') {
-				console.log('fbComments:     Sent email notification');
+				//console.log('fbComments:     Sent email notification');
 			} else {
-				console.log('fbComments:     FAILED to send email notification');
+				//console.log('fbComments:     FAILED to send email notification');
 			}
 		});";
 		}
@@ -377,39 +405,7 @@
 	function fbComments_printFbCommentsTag($xid, $postTitle, $postUrl, $customStylesheet) {
 		global $fbComments_settings;
 		
-		echo sprintf("
-	<script type='text/javascript'>
-	    var divWidth = j('div#fbComments').width();
-	    var fbWidth = '%s';
-	    
-	    // If the user-specified width is a percentage
-	    if (fbWidth.indexOf('%%') != -1) {
-	    	var percent = fbWidth.substring(0, fbWidth.length-1); // Strip off the '%%'
-	    	var newWidth = percent*divWidth/100; // Calculate new width in px (since <fb:comments/> only accepts widths in px
-	    	
-	    	console.log('fbComments: Printing width as a percentage: ' + percent + '%% => ' + newWidth + 'px');
-	    	j('div#fbComments').append('<fb:comments xid=\'%s\' numposts=\'%s\' width=\'' + newWidth + '\' simple=\'%s\' publish_feed=\'true\' reverse=\'%s\' css=\'%s\' title=\'%s\' url=\'%s\' notify=\'true\'></fb:comments>');
-	    } else {
-	    	console.log('fbComments: Printing width in pixels: %spx');
-	    	j('div#fbComments').append('<fb:comments xid=\'%s\' numposts=\'%s\' width=\'%s\' simple=\'%s\' publish_feed=\'true\' reverse=\'%s\' css=\'%s\' title=\'%s\' url=\'%s\' notify=\'true\'></fb:comments>');
-	    }	
-	</script>
-</div>\n", $fbComments_settings['fbComments_width'],
-		   $xid,
-		   $fbComments_settings['fbComments_numPosts'],
-		   $fbComments_settings['fbComments_noBox'],
-		   $fbComments_settings['fbComments_reverseOrder'],
-		   $customStylesheet,
-		   $postTitle,
-		   $postUrl,
-		   $fbComments_settings['fbComments_width'],
-		   $xid,
-		   $fbComments_settings['fbComments_numPosts'],
-		   $fbComments_settings['fbComments_width'],
-		   $fbComments_settings['fbComments_noBox'],
-		   $fbComments_settings['fbComments_reverseOrder'],
-		   $customStylesheet,
-		   $postTitle,
-		   $postUrl);
+		echo "\t<fb:comments xid='$xid' numposts='{$fbComments_settings['fbComments_numPosts']}' width='{$fbComments_settings['fbComments_width']}' simple='{$fbComments_settings['fbComments_noBox']}' publish_feed='true' reverse='{$fbComments_settings['fbComments_reverseOrder']}' css='$customStylesheet' title='$postTitle' url='$postUrl' notify='true'></fb:comments>
+</div>\n";
 	}
 ?>

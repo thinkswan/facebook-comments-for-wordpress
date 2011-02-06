@@ -13,6 +13,7 @@
 
 	// Check if we want to update the comment count or send a notification email
 	switch ($_POST['fn']) {
+		// Update Facebook comment count
     	case "addComment":
     		fbComments_log('In ' . basename(__FILE__) . " with fn={$_POST['fn']}, xid={$_POST['xid']}");
     		$count = get_option("fbComments_commentCount_{$_POST['xid']}");
@@ -26,6 +27,8 @@
     	    
     	    exit();
     	    break;
+    	    
+    	// Email notifications
     	case "sendNotification":
     		fbComments_log('In ' . basename(__FILE__) . " with fn={$_POST['fn']}, xid={$_POST['xid']}, " .
 			  			   "postTitle={$_POST['postTitle']}, postUrl={$_POST['postUrl']}, ");
@@ -49,7 +52,7 @@
     	    		   "$comment\n\n" .
     	    		   "You can see all Facebook comments on this post here: {$_POST['postUrl']}#facebook-comments";
     	    
-    	    // Wordwrap the message and strip slashes that may have wrapped quotes (mail() only accepts lines 70 characters or less)
+    	    // Wordwrap the message and strip slashes that may have wrapped quotes
 			$message = stripslashes(wordwrap($message, 70));
 			
     	    $headers = "From: $username <$to>\r\n" .
@@ -57,7 +60,7 @@
           			   "X-Mailer: PHP" . phpversion();
           	
           	// Send the email notification
-          	if (mail($to, $subject, $message, $headers)) {
+          	if (wp_mail($to, $subject, $message, $headers)) {
           		fbComments_log(sprintf('    Sent email notification to %s', $to));
 				echo "true";
 			} else {

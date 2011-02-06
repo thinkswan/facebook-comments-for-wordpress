@@ -56,23 +56,12 @@
 			$fbComments_settings['fbComments_numPosts'] = get_option('fbComments_numPosts');
 		}
 		
-		// If width was entered as a percentage, ensure it's greater than 0%
-		if (strpos($_POST['fbComments_width'], '%') !== false) {
-			$width = substr($_POST['fbComments_width'], 0, strpos($_POST['fbComments_width'], '%'));
-			
-			if (intval($width) > 0) {
-				$fbComments_settings['fbComments_width'] = intval($width) . '%';
-			} else {
-				$fbComments_settings['fbComments_width'] = get_option('fbComments_width');
-			}
-        } else { // If width was entered as a pixel value, ensure it's greater than 0px
-        	if (intval($_POST['fbComments_width']) > 0) {
-				$fbComments_settings['fbComments_width'] = intval($_POST['fbComments_width']);
-			} else {
-				$fbComments_settings['fbComments_width'] = get_option('fbComments_width');
-			}
-        }
-		update_option('fbComments_width', $fbComments_settings['fbComments_width']);
+		if (intval($_POST['fbComments_width']) > 0) {
+			$fbComments_settings['fbComments_width'] = intval($_POST['fbComments_width']);
+			update_option('fbComments_width', $fbComments_settings['fbComments_width']);
+		} else {
+			$fbComments_settings['fbComments_width'] = get_option('fbComments_width');
+		}
 		
 		$fbComments_settings['fbComments_displayLocation'] = (isset($_POST['fbComments_displayLocation'])) ? $_POST['fbComments_displayLocation'] : $fbComments_defaults['fbComments_displayLocation'];
 		update_option('fbComments_displayLocation', $fbComments_settings['fbComments_displayLocation']);
@@ -129,7 +118,7 @@
 				<p><?php _e('Application Secret (<a href="http://grahamswan.com/facebook-comments">Help</a>): '); ?><input type="text" name="fbComments_appSecret" value="<?php echo $fbComments_settings['fbComments_appSecret']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a href="http://www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
     			<p><?php _e('Comments XID: '); ?><input type="text" name="fbComments_xid" value="<?php echo $fbComments_settings['fbComments_xid']; ?>" size="20"><em><?php _e(" (Only change this if you know what you're doing. Must be a unique string. <a href='" . FBCOMMENTS_WEBPAGE . "#xid'>Learn more</a>)"); ?></em></p>
     			<p><input type="checkbox" id="fbComments_includeFbJs" name="fbComments_includeFbJs" value="true" <?php if ($fbComments_settings['fbComments_includeFbJs']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbJs"><?php _e(' Include Facebook JavaScript SDK'); ?></label><em><?php _e(" (This should be checked unless you've manually included the SDK elsewhere)"); ?></em></p>
-    			<p class="indent"><input type="checkbox" id="fbComments_includeFbJsOldWay" name="fbComments_includeFbJsOldWay" value="true" <?php if ($fbComments_settings['fbComments_includeFbJsOldWay']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbJsOldWay"><?php _e(' The old way'); ?></label><em><?php _e(" (If the comments no longer load since updating the plugin, check this box to include the JavaScript SDK the old way)"); ?></em></p>
+    			<p class="indent"><input type="checkbox" id="fbComments_includeFbJsOldWay" name="fbComments_includeFbJsOldWay" value="true" <?php if ($fbComments_settings['fbComments_includeFbJsOldWay']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbJsOldWay"><?php _e(' The old way'); ?></label><em><?php _e(" (If the comments no longer load since updating the plugin, check this box to include the JavaScript SDK the old way. Combined comment counts and email notifications will not work with this option enabled)"); ?></em></p>
     			<p><input type="checkbox" id="fbComments_includeFbmlLangAttr" name="fbComments_includeFbmlLangAttr" value="true" <?php if ($fbComments_settings['fbComments_includeFbmlLangAttr']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbmlLangAttr"><?php _e(' Include Facebook FBML reference'); ?></label><em><?php _e(" (This should be checked unless you have another plugin enabled that includes the FBML reference)"); ?></em></p>
     			<p><input type="checkbox" id="fbComments_includeOpenGraphLangAttr" name="fbComments_includeOpenGraphLangAttr" value="true" <?php if ($fbComments_settings['fbComments_includeOpenGraphLangAttr']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeOpenGraphLangAttr"><?php _e(' Include OpenGraph reference'); ?></label><em><?php _e(" (This should be checked unless you have another plugin enabled that includes the OpenGraph reference)"); ?></em></p>
     			<p><input type="checkbox" id="fbComments_includeOpenGraphMeta" name="fbComments_includeOpenGraphMeta" value="true" <?php if ($fbComments_settings['fbComments_includeOpenGraphMeta']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeOpenGraphMeta"><?php _e(' Include OpenGraph meta information'); ?></label><em><?php _e(" (This will add the following meta information to the page &lt;head&gt; to assist with Like button clicks: post/page title, site name, current URL and content type)"); ?></em></p>
@@ -279,7 +268,7 @@
 				<p><?php _e('Facebook Comments Section Title: '); ?><input type="text" name="fbComments_title" value="<?php echo $fbComments_settings['fbComments_title']; ?>" size="30"><em><?php _e(' (This is the title text displayed above the Facebook commenting section)'); ?></em></p>
 				<p><input type="checkbox" id="fbComments_displayTitle" name="fbComments_displayTitle" value="true" <?php if ($fbComments_settings['fbComments_displayTitle']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_displayTitle"><?php _e(' Display the Facebook comments title (set above)'); ?></label></p>
 				<p><?php _e('Number of Posts to Display: '); ?><input type="text" name="fbComments_numPosts" value="<?php echo $fbComments_settings['fbComments_numPosts']; ?>" size="5" maxlength="3"></p>
-				<p><?php _e('Width of Comments Box (px or %): '); ?><input type="text" name="fbComments_width" value="<?php echo $fbComments_settings['fbComments_width']; ?>" size="5" maxlength="4"><em><?php _e(' (Eg: \'500\' corresponds to 500px. \'100%\' corresponds to, well, 100%.)'); ?></em></p>
+				<p><?php _e('Width of Comments Box (px): '); ?><input type="text" name="fbComments_width" value="<?php echo $fbComments_settings['fbComments_width']; ?>" size="5" maxlength="4"></p>
 				<p><?php _e('Display Facebook comments before or after WordPress comments? '); ?>
 					<select name="fbComments_displayLocation" disabled="disabled">
 						<option value="before"<?php if ($fbComments_settings['fbComments_displayLocation'] == 'before') echo ' selected="selected"'; ?>>Before</option>
