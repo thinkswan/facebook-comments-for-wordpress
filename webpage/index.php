@@ -67,7 +67,7 @@
 				
 				As a result of these plans, please do not email me or send me Facebook or Twitter messages regarding bugs and feature requests any longer. You can always find help by <a href="#demo">posting in the Live Demo</a> below or by <a href="http://wordpress.org/tags/facebook-comments-for-wordpress?forum_id=10">leaving a message in the WordPress forums</a>.<br /><br />
 				
-				<strong>If the new version isn't working for you</strong>, you can always <a href="http://wordpress.org/extend/plugins/facebook-comments-for-wordpress/download/">download a previous version here</a> (v1.5 worked for nearly everyone, but lacks combined comment counts and notifications).
+				<strong>If the new version isn't working for you</strong>, you can always <a href="http://wordpress.org/extend/plugins/facebook-comments-for-wordpress/download/">download a previous version here</a> (v1.5.2 worked for nearly everyone, but lacks combined comment counts and notifications).
 			</div>
 			
 			<!-- What Is It? -->
