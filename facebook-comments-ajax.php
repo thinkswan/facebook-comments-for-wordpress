@@ -34,13 +34,13 @@
 			  			   "postTitle={$_POST['postTitle']}, postUrl={$_POST['postUrl']}, ");
 			
 			fbComments_log("    Fetching comments using an access token of {$fbComments_settings['fbComments_accessToken']}");
-			$comments = file_get_contents("https://api.facebook.com/method/comments.get?xid={$_POST['xid']}&access_token={$fbComments_settings['fbComments_accessToken']}&format=json");
+			$comments = fbComments_getUrl("https://api.facebook.com/method/comments.get?xid={$_POST['xid']}&access_token={$fbComments_settings['fbComments_accessToken']}&format=json");
 			$commentsJson = json_decode($comments);
 			$userId = $commentsJson[0]->fromid;
 			$comment = $commentsJson[0]->text;
 			
 			fbComments_log("    Fetching user info using an access token of {$fbComments_settings['fbComments_accessToken']}");
-			$user = file_get_contents("https://api.facebook.com/method/users.getInfo?uids=$userId&fields=name&access_token={$fbComments_settings['fbComments_accessToken']}&format=json");
+			$user = fbComments_getUrl("https://api.facebook.com/method/users.getInfo?uids=$userId&fields=name&access_token={$fbComments_settings['fbComments_accessToken']}&format=json");
 			$userJson = json_decode($user);
 			$username = $userJson[0]->name;
 			fbComments_log("    For latest comment, poster UID=$userId, poster name=$username, comment=$comment");

@@ -3,8 +3,8 @@ Contributors: thinkswan, AlmogBaku, sboddez
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=7QKHFXCNDTA5U&lc=CA&item_name=Graham%20Swan%20%28Facebook%20Comments%20for%20WordPress%20plugin%29&item_number=thinkswan&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
 Tags: comments, facebook, social graph, posts, pages, discussion, facebook comments
 Requires at least: 2.9.2
-Tested up to: 3.0.4
-Stable tag: 2.1
+Tested up to: 3.0.5
+Stable tag: 2.1.1
 
 Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, etc.
 
@@ -29,7 +29,7 @@ Features:
 
 == Installation ==
 
-1. Unzip `facebook-comments-for-wordpress.2.1.zip` to your `/wp-content/plugins/` directory
+1. Unzip `facebook-comments-for-wordpress.2.1.1.zip` to your `/wp-content/plugins/` directory
 2. Activate the plugin through the `Plugins` menu in WordPress (depending on the number of posts on your site, activation may take a moment because the plugin is caching all of your comment counts)
 3. Setup the plugin options by using the `Facebook Comments` page (located under the `Settings` menu)
 
@@ -43,6 +43,9 @@ Features:
 If you need help, please refer to the official FAQ at http://grahamswan.com/facebook-comments/#faq.
 
 == Changelog ==
+
+= 2.1.1 =
+* Bugfix: Replaced all file_get_contents() instances with cURL calls (since some web servers don't allow file fetching by URL for security reasons)
 
 = 2.1 =
 * Bugfix: Removed the option to set widths as a percentage because the JavaScript was breaking the plugin for almost everyone (no more multiple inclusions)
@@ -120,6 +123,9 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 * Initial release
 
 == Upgrade Notice ==
+
+= 2.1.1 =
+This update replaces all file_get_contents() instances with cURL calls. This should bring the plugin back to a healthy state for everyone who doesn't have file fetching by URL enabled on their web server (which was a surprising number of people).
 
 = 2.1 =
 This update fixes a bug that caused the plugin to break in Firefox, as well as a bug that caused the comments to be included multiple times on some themes. It also removes the width as a percentage feature because it crippled the plugin for nearly everyone.

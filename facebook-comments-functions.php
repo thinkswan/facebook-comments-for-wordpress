@@ -88,6 +88,28 @@
 		return $rand;
 	}
 	
+	// Since file_get_contents() is disabled on most webservers, use cURL instead
+	function fbComments_getUrl($url) {
+		fbComments_log('In ' . __FUNCTION__ . "(url=$url)");
+		$timeout = 5; // Set timeout to 5s
+		$options = array(
+			CURLOPT_URL 		   => "$url",
+			CURLOPT_RETURNTRANSFER => true, // Return webpage as a string instead of directly outputting it
+			CURLOPT_CONNECTTIMEOUT => $timeout
+		);
+		
+		$ch = curl_init();
+		curl_setopt_array($ch, $options);
+		$file_contents = curl_exec($ch);
+		curl_close($ch);
+		
+		if (!$file_contents) {
+			fbComments_log('    FAILED to retrieve content via cURL');
+		}
+		
+		return $file_contents;
+	}
+	
 	// Log to the Apache error log (usually located in /var/log/apache2/error_log)
 	function fbComments_log($msg) {
 		if (FBCOMMENTS_ERRORS) {
@@ -117,7 +139,7 @@
 		global $fbComments_settings;
 		
 		if (!get_option('fbComments_accessToken')) {
-			$accessToken = substr(file_get_contents("https://graph.facebook.com/oauth/access_token?type=client_cred&client_id={$fbComments_settings['fbComments_appId']}&client_secret={$fbComments_settings['fbComments_appSecret']}"), 13);
+			$accessToken = substr(fbComments_getUrl("https://graph.facebook.com/oauth/access_token?type=client_cred&client_id={$fbComments_settings['fbComments_appId']}&client_secret={$fbComments_settings['fbComments_appSecret']}"), 13);
 			
 			if ($accessToken != '') {
 				fbComments_log("    Storing an access token of $accessToken");

@@ -65,7 +65,7 @@
 				<p>It's been a slice, folks!</p>
 				<strong>I will no longer be maintaining this plugin</strong>. It's time for me to move on to new projects in the mobile space. If anyone would like to extend the plugin, you can do so by <a href="https://github.com/thinkswan/Facebook-Comments-for-WordPress">forking the project on GitHub</a> and letting me know when you'd like an update pushed to WordPress. If someone takes up these reigns, I'll eventually just give them full control of the plugin page to take it where they see fit.<br /><br />
 				
-				As a result of these plans, please do not email me or send me Facebook or Twitter messages regarding bugs and feature requests any longer. You can always find help by <a href="#demo">posting in the Live Demo</a> below or by <a href="http://wordpress.org/tags/facebook-comments-for-wordpress?forum_id=10">leaving a message in the WordPress forums</a>.<br /><br />
+				As a result of these plans, please do not contact me regarding bugs and feature requests any longer. You can always find help by <a href="#demo">posting in the Live Demo</a> below or by <a href="http://wordpress.org/tags/facebook-comments-for-wordpress?forum_id=10">leaving a message in the WordPress forums</a>.<br /><br />
 				
 				<strong>If the new version isn't working for you</strong>, you can always <a href="http://wordpress.org/extend/plugins/facebook-comments-for-wordpress/download/">download a previous version here</a> (v1.5.2 worked for nearly everyone, but lacks combined comment counts and notifications).
 			</div>
