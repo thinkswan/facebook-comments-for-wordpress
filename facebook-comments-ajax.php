@@ -1,4 +1,8 @@
 <?php
+	if (FBCOMMENTS_ERRORS) {
+		error_reporting(E_ALL); // Ensure all errors and warnings are verbose
+	}
+	
 	// Load WordPress functions
 	require('../../../wp-load.php');
 

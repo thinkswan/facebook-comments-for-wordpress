@@ -46,6 +46,8 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 
 = 2.1.1 =
 * Bugfix: Replaced all file_get_contents() instances with cURL calls (since some web servers don't allow file fetching by URL for security reasons)
+* Bugfix: Combined comment counts now work when comments are included manually (as long as the option is checked)
+* The plugin now checks your PHP version (must be v5.0.0 or greater) and ensures you have the cURL extension installed before activating
 
 = 2.1 =
 * Bugfix: Removed the option to set widths as a percentage because the JavaScript was breaking the plugin for almost everyone (no more multiple inclusions)
@@ -125,7 +127,7 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 == Upgrade Notice ==
 
 = 2.1.1 =
-This update replaces all file_get_contents() instances with cURL calls. This should bring the plugin back to a healthy state for everyone who doesn't have file fetching by URL enabled on their web server (which was a surprising number of people).
+This update replaces all file_get_contents() instances with cURL calls. This should bring the plugin back to a healthy state for everyone who doesn't have file fetching by URL enabled on their web server (which was a surprising number of people). Combined comment counts now work when the comments are included manually as well.
 
 = 2.1 =
 This update fixes a bug that caused the plugin to break in Firefox, as well as a bug that caused the comments to be included multiple times on some themes. It also removes the width as a percentage feature because it crippled the plugin for nearly everyone.

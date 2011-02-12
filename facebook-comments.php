@@ -10,6 +10,7 @@
 	
 	define('FBCOMMENTS_ERRORS', false); // Set to true while developing, false for a release
 	define('FBCOMMENTS_VER', '2.1.1');
+	define('FBCOMMENTS_REQUIRED_PHP_VER', '5.0.0');
 	define('FBCOMMENTS_AUTHOR', 'Graham Swan');
 	define('FBCOMMENTS_WEBPAGE', 'http://grahamswan.com/facebook-comments/');
 	define('FBCOMMENTS_PATH', plugins_url('facebook-comments-for-wordpress/'));
@@ -26,7 +27,7 @@
 	
 	// Include common functions
 	require_once 'facebook-comments-functions.php';
-	require_once 'scripts/facebook.php';
+	require_once 'scripts/facebook.php'; // Facebook API wrapper
 	wp_enqueue_script('jquery');
 	
 	/**********************************
@@ -46,6 +47,7 @@
 		'fbComments_includeOpenGraphMeta',
 		'fbComments_includeFbComments',
 		'fbComments_hideWpComments',
+		'fbComments_combineCommentCounts',
 		'fbComments_notify',
 		'fbComments_language',
 		'fbComments_displayTitle',
@@ -75,6 +77,7 @@
 		'fbComments_includeOpenGraphMeta'		=> true,
 		'fbComments_includeFbComments'			=> true,
 		'fbComments_hideWpComments'				=> false,
+		'fbComments_combineCommentCounts'		=> true,
 		'fbComments_notify'						=> true,
 		'fbComments_language'					=> 'en_US',
 		'fbComments_displayTitle'				=> true,
@@ -93,7 +96,7 @@
 	);
 	
 	$fbComments_settings = fbComments_getSettings();
-	
+		
 	/**********************************
 	 Activation hooks/actions
 	 **********************************/
@@ -195,12 +198,13 @@
 	// Ensure we're able to display the comment box
 	if ($fbComments_settings['fbComments_includeFbComments']) {		
 		add_filter('comments_array', 'facebook_comments');
+	}
 	
-		// Combine the Facebook and WordPress comment counts if desired
-		if (!empty($fbComments_settings['fbComments_appId']) &&
-			!empty($fbComments_settings['fbComments_appSecret'])) {			
-				add_filter('get_comments_number', 'fbComments_combineCommentCounts');
-		}
+	// Combine the Facebook and WordPress comment counts if desired
+	if ($fbComments_settings['fbComments_combineCommentCounts'] &&
+		!empty($fbComments_settings['fbComments_appId']) &&
+		!empty($fbComments_settings['fbComments_appSecret'])) {			
+			add_filter('get_comments_number', 'fbComments_combineCommentCounts');
 	}
 
 ?>

@@ -37,6 +37,9 @@
 		$fbComments_settings['fbComments_hideWpComments'] = (isset($_POST['fbComments_hideWpComments']) && $_POST['fbComments_hideWpComments'] == 'true') ? true : false;
 		update_option('fbComments_hideWpComments', $fbComments_settings['fbComments_hideWpComments']);
 		
+		$fbComments_settings['fbComments_combineCommentCounts'] = (isset($_POST['fbComments_combineCommentCounts']) && $_POST['fbComments_combineCommentCounts'] == 'true') ? true : false;
+		update_option('fbComments_combineCommentCounts', $fbComments_settings['fbComments_combineCommentCounts']);
+		
 		$fbComments_settings['fbComments_notify'] = (isset($_POST['fbComments_notify']) && $_POST['fbComments_notify'] == 'true') ? true : false;
 		update_option('fbComments_notify', $fbComments_settings['fbComments_notify']);
 		
@@ -131,6 +134,7 @@
 			<div class="inside">
     			<p><input type="checkbox" id="fbComments_includeFbComments" name="fbComments_includeFbComments" value="true" <?php if ($fbComments_settings['fbComments_includeFbComments']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbComments"><?php _e(' Include Facebook comments on blog'); ?></label><em><?php _e(" (Uncheck this if you want to hide the Facebook comments without having to deactivate the plugin)"); ?></em></p>
     			<p><input type="checkbox" id="fbComments_hideWpComments" name="fbComments_hideWpComments" value="true" <?php if ($fbComments_settings['fbComments_hideWpComments']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_hideWpComments"> <?php _e('Hide WordPress comments on posts/pages where Facebook commenting is enabled'); ?></label></p>
+    			<p><input type="checkbox" id="fbComments_combineCommentCounts" name="fbComments_combineCommentCounts" value="true" <?php if ($fbComments_settings['fbComments_combineCommentCounts']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_combineCommentCounts"> <?php _e('Combine WordPress and Facebook comment counts'); ?></label></p>
 			</div>
 		</div>
 		
