@@ -8,7 +8,7 @@
 	Author URI: http://www.grahamswan.com/
 	*/
 	
-	define('FBCOMMENTS_ERRORS', true); // Set to true while developing, false for a release
+	define('FBCOMMENTS_ERRORS', false); // Set to true while developing, false for a release
 	define('FBCOMMENTS_VER', '2.1.2');
 	define('FBCOMMENTS_AUTHOR', 'Graham Swan');
 	define('FBCOMMENTS_WEBPAGE', 'http://grahamswan.com/facebook-comments/');
@@ -194,7 +194,7 @@
 	 /**
 	 * Display recent comments from facebook in a widget.
 	 *
-	 * @since 2.1.?
+	 * @since 2.1.2
 	 */
 	function fbcomments_dashboard_widget_function() {
 		global $fbComments_settings;
