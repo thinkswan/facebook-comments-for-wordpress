@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=7QKHF
 Tags: comments, facebook, social graph, posts, pages, discussion, facebook comments
 Requires at least: 2.9.2
 Tested up to: 3.0.5
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 
 Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, etc.
 
@@ -29,7 +29,7 @@ Features:
 
 == Installation ==
 
-1. Unzip `facebook-comments-for-wordpress.2.1.1.zip` to your `/wp-content/plugins/` directory
+1. Unzip `facebook-comments-for-wordpress.2.1.2.zip` to your `/wp-content/plugins/` directory
 2. Activate the plugin through the `Plugins` menu in WordPress (depending on the number of posts on your site, activation may take a moment because the plugin is caching all of your comment counts)
 3. Setup the plugin options by using the `Facebook Comments` page (located under the `Settings` menu)
 
@@ -44,8 +44,11 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 
 == Changelog ==
 
+= 2.1.2 =
+* Bugfix: Pre-activation checks have been converted to warnings (if you receive a `Parse error` when activating, please ensure you're running PHP v5.0.0 or higher on your server)
+
 = 2.1.1 =
-* Bugfix: Replaced all file_get_contents() instances with cURL calls (since some web servers don't allow file fetching by URL for security reasons)
+* Bugfix: Replaced all `file_get_contents()` instances with cURL calls (since some web servers don't allow file fetching by URL for security reasons)
 * Bugfix: Combined comment counts now work when comments are included manually (as long as the option is checked)
 * The plugin now checks your PHP version (must be v5.0.0 or greater) and ensures you have the cURL extension installed before activating
 
@@ -125,6 +128,9 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 * Initial release
 
 == Upgrade Notice ==
+
+= 2.1.2 =
+This update changes the pre-activation checks to notices to fix the activation issues some people were having. (If you receive a Parse error when activating, please ensure you're running PHP v5.0.0 or higher on your server.)
 
 = 2.1.1 =
 This update replaces all file_get_contents() instances with cURL calls. This should bring the plugin back to a healthy state for everyone who doesn't have file fetching by URL enabled on their web server (which was a surprising number of people). Combined comment counts now work when the comments are included manually as well.

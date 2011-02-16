@@ -4,12 +4,12 @@
 	Plugin URI: http://www.grahamswan.com/facebook-comments
 	Description: Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, etc.
 	Author: Graham Swan
-	Version: 2.1.1
+	Version: 2.1.2
 	Author URI: http://www.grahamswan.com/
 	*/
 	
 	define('FBCOMMENTS_ERRORS', false); // Set to true while developing, false for a release
-	define('FBCOMMENTS_VER', '2.1.1');
+	define('FBCOMMENTS_VER', '2.1.2');
 	define('FBCOMMENTS_REQUIRED_PHP_VER', '5.0.0');
 	define('FBCOMMENTS_AUTHOR', 'Graham Swan');
 	define('FBCOMMENTS_WEBPAGE', 'http://grahamswan.com/facebook-comments/');
@@ -62,7 +62,7 @@
 		'fbComments_titleCss',
 		'fbComments_darkSite',
 		'fbComments_noBox',
-		'fbComments_displayWarning'
+		'fbComments_displayAppIdWarning'
 	);
 	
 	$fbComments_defaults = array(
@@ -92,7 +92,7 @@
 		'fbComments_titleCss'					=> 'margin-bottom: 15px; font-size: 140%; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 5px;',
 		'fbComments_darkSite'					=> '',
 		'fbComments_noBox'						=> false,
-		'fbComments_displayWarning'				=> true
+		'fbComments_displayAppIdWarning'		=> true
 	);
 	
 	$fbComments_settings = fbComments_getSettings();
@@ -105,16 +105,19 @@
 	register_deactivation_hook(__FILE__, 'fbComments_deactivate');
 	register_uninstall_hook(__FILE__, 'fbComments_uninit');
 	
-	// Display a message prompting the user to enter a Facebook application ID and secret upon plugin activation
-	if ($fbComments_settings['fbComments_displayWarning']) {
-		function fbComments_warning() {
-			echo "\n<div class='error'><p><strong>" . __('The Facebook comments box will not be included in your posts until you set a valid application ID. Please <a href="' . admin_url('options-general.php?page=facebook-comments') . '">set your application ID now</a> using the options page.') . "</strong></p></div>\n";
+	// Display a message prompting the user to enter a Facebook application ID and secret upon plugin activation (if they aren't already set)
+	if ($fbComments_settings['fbComments_displayAppIdWarning']) {
+		if (empty($fbComments_settings['fbComments_appId']) ||
+			empty($fbComments_settings['fbComments_appSecret'])) {
+			function fbComments_appIdWarning() {
+			    echo "\n<div class='error'><p><strong>" . __('The Facebook comments box will not be included in your posts until you set a valid application ID and application secret. Please <a href="' . admin_url('options-general.php?page=facebook-comments') . '">set your application ID and secret now</a> using the options page.') . "</strong></p></div>\n";
+			}
+			
+			add_action('admin_notices', 'fbComments_appIdWarning');
 		}
-	
-		add_action('admin_notices', 'fbComments_warning');
 		
 		// Set the fbComments_displayWarning option to false so the message is only displayed once
-		update_option('fbComments_displayWarning', false);
+		update_option('fbComments_displayAppIdWarning', false);
 	}
 	
 	// Enqueue correct stylesheet if user wants to hide the WordPress commenting form

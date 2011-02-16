@@ -9,31 +9,6 @@
 	
 	// Update database with default options upon plugin activation
 	function fbComments_init() {
-		// Ensure the cURL extension is installed (to communicate with the Facebook API) and that we're using PHP v5.0.0 or higher (for try-catch support)
-		if (!in_array('curl', get_loaded_extensions()) ||
-			version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
-			$phpVersionMsg = 'your server has <u>PHP v' . phpversion() . '</u>';
-			$curlInstalledMsg = 'your server <u>does not</u> have cURL installed';
-			$requirementsMsg = '';
-			
-			if (in_array('curl', get_loaded_extensions())) {
-			    $curlInstalledMsg = 'your server has cURL installed';
-			} else {
-			    $requirementsMsg = ' Please ask your webhost to install the cURL extension before activating this plugin.';
-			}
-			
-			if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) > -1) {
-			    $phpVersionMsg = 'your server has PHP v' . phpversion();
-			} else {
-			    $requirementsMsg = ' Please ask your webhost to upgrade to the latest version of PHP before activating this plugin.';
-			}
-				
-			die("<p style=\"color: #333; font-size: 12px; font-weight: bold; font-family: \'Lucida Grande\', Verdana, Arial, \'Bitstream Vera Sans\', sans-serif;\">" . __("Facebook Comments for WordPress requires PHP v" . FBCOMMENTS_REQUIRED_PHP_VER . " or higher ($phpVersionMsg) and the cURL extension ($curlInstalledMsg).$requirementsMsg") . "</p>");
-		} else {
-			fbComments_log('Your server supports all requirements. The plugin has been activated');
-		}
-
-		// The server satisfies all requirements, so continue activating the plugin
 		global $fbComments_defaults, $fbComments_settings;
 		
 		foreach($fbComments_defaults as $key => $val) {

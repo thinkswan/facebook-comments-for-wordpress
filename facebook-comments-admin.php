@@ -104,7 +104,11 @@
 	<h2><?php _e('Facebook Comments for WordPress Options'); ?></h2>
 	
 	<?php
-		if (empty($fbComments_settings['fbComments_appId']) || empty($fbComments_settings['fbComments_appSecret'])) {
+		if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
+			echo '<div class="error"><p><strong>' . __('This plugin requires PHP v') . FBCOMMENTS_REQUIRED_PHP_VER . __(' or higher to run (you have PHP v') . phpversion() . __('). Please ask your webhost to install the latest version of PHP on your server.') . '</strong></p></div>';
+		} elseif (!in_array('curl', get_loaded_extensions())) {
+			echo '<div class="error"><p><strong>' . __('This plugin requires the PHP cURL extension to communicate with Facebook. Please ask your webhost to install the cURL extension on your server.') . '</strong></p></div>';
+		} elseif (empty($fbComments_settings['fbComments_appId']) || empty($fbComments_settings['fbComments_appSecret'])) {
 			echo '<div class="error"><p><strong>' . __('The Facebook comments box will not be included in your posts until you set a valid application ID and application secret.') . '</strong></p></div>';
 		} elseif (isset($_POST['fbComments_update']) && $_POST['fbComments_update'] != 'true') {
 			echo '<br class="gutter" />';
@@ -117,8 +121,8 @@
 			<h3><?php _e('Core Settings'); ?></h3>
 			
 			<div class="inside">
-				<p><?php _e('Application ID (<a href="http://grahamswan.com/facebook-comments">Help</a>): '); ?><input type="text" name="fbComments_appId" value="<?php echo $fbComments_settings['fbComments_appId']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a href="http://www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
-				<p><?php _e('Application Secret (<a href="http://grahamswan.com/facebook-comments">Help</a>): '); ?><input type="text" name="fbComments_appSecret" value="<?php echo $fbComments_settings['fbComments_appSecret']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a href="http://www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
+				<p><?php _e('Application ID (<a href="http://grahamswan.com/facebook-comments/#install">Help</a>): '); ?><input type="text" name="fbComments_appId" value="<?php echo $fbComments_settings['fbComments_appId']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a href="http://www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
+				<p><?php _e('Application Secret (<a href="http://grahamswan.com/facebook-comments/#install">Help</a>): '); ?><input type="text" name="fbComments_appSecret" value="<?php echo $fbComments_settings['fbComments_appSecret']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a href="http://www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
     			<p><?php _e('Comments XID: '); ?><input type="text" name="fbComments_xid" value="<?php echo $fbComments_settings['fbComments_xid']; ?>" size="20"><em><?php _e(" (Only change this if you know what you're doing. Must be a unique string. <a href='" . FBCOMMENTS_WEBPAGE . "#xid'>Learn more</a>)"); ?></em></p>
     			<p><input type="checkbox" id="fbComments_includeFbJs" name="fbComments_includeFbJs" value="true" <?php if ($fbComments_settings['fbComments_includeFbJs']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbJs"><?php _e(' Include Facebook JavaScript SDK'); ?></label><em><?php _e(" (This should be checked unless you've manually included the SDK elsewhere)"); ?></em></p>
     			<p class="indent"><input type="checkbox" id="fbComments_includeFbJsOldWay" name="fbComments_includeFbJsOldWay" value="true" <?php if ($fbComments_settings['fbComments_includeFbJsOldWay']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbJsOldWay"><?php _e(' The old way'); ?></label><em><?php _e(" (If the comments no longer load since updating the plugin, check this box to include the JavaScript SDK the old way. Combined comment counts and email notifications will not work with this option enabled)"); ?></em></p>
