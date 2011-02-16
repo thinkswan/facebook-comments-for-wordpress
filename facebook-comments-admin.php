@@ -72,6 +72,9 @@
 		$fbComments_settings['fbComments_displayPagesOrPosts'] = $_POST['fbComments_displayPagesOrPosts'];
 		update_option('fbComments_displayPagesOrPosts', $fbComments_settings['fbComments_displayPagesOrPosts']);
 		
+		$fbComments_settings['fbComments_publishToWall'] = (isset($_POST['fbComments_publishToWall']) && $_POST['fbComments_publishToWall'] == 'true') ? true : false;
+	    update_option('fbComments_publishToWall', $fbComments_settings['fbComments_publishToWall']);
+		
 		$fbComments_settings['fbComments_reverseOrder'] = (isset($_POST['fbComments_reverseOrder']) && $_POST['fbComments_reverseOrder'] == 'true') ? true : false;
 		update_option('fbComments_reverseOrder', $fbComments_settings['fbComments_reverseOrder']);
 		
@@ -291,6 +294,7 @@
 						<option value="posts"<?php if ($fbComments_settings['fbComments_displayPagesOrPosts'] == 'posts') echo ' selected="selected"'; ?>>Posts only</option>
 					</select>
 				</p>
+				<p><input type="checkbox" id="fbComments_publishToWall" name="fbComments_publishToWall" value="true" <?php if ($fbComments_settings['fbComments_publishToWall']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_publishToWall"><?php _e(' Check the <strong>Post comment to my Facebook profile</strong> box by default'); ?></label></p>
 				<p><input type="checkbox" id="fbComments_reverseOrder" name="fbComments_reverseOrder" value="true" <?php if ($fbComments_settings['fbComments_reverseOrder']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_reverseOrder"><?php _e(' Reverse the order of the Facebook comments section'); ?></label><em><?php _e('  (Comments will appear in chronological order and the composer will be at the bottom)'); ?></em></p>
 				<p><input type="checkbox" id="fbComments_hideFbLikeButton" name="fbComments_hideFbLikeButton" value="true" <?php if ($fbComments_settings['fbComments_hideFbLikeButton']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_hideFbLikeButton"><?php _e(' Hide the Like button and text'); ?></label></p>
 			</div>

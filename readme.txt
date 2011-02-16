@@ -45,6 +45,7 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 == Changelog ==
 
 = 2.1.2 =
+* Option: Ability to uncheck the **Post comment to my Facebook profile** box by default
 * Bugfix: Pre-activation checks have been converted to warnings (if you receive a `Parse error` when activating, please ensure you're running PHP v5.0.0 or higher on your server)
 
 = 2.1.1 =
@@ -78,15 +79,15 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 * Bugfix: `type` attribute is now set in the script inclusion (so older browsers will render it properly)
 
 = 1.5.1 =
-* Bugfix: fixes the bug where hiding the WordPress comments caused errors in `foreach()` loops on certain themes
-* Moves all stylesheets to `css/` folder and all images to `images/` folder for better organization
+* Bugfix: Fixes the bug where hiding the WordPress comments caused errors in `foreach()` loops on certain themes
+* Moved all stylesheets to `css/` folder and all images to `images/` folder for better organization
 
 = 1.5 =
 * Option: WordPress comments can be hidden on pages/posts where Facebook comments are enabled
 * Option: Like button can be hidden
 * Option: `Facebook Social Plugins` text and icon is hidden
-* Option: custom stylesheet for darker websites can be included (as a result, ability to reference your own custom stylesheet was removed)
-* Bugfix: comments now render properly in Internet Explorer (due to `FBML` reference)
+* Option: Custom stylesheet for darker websites can be included (as a result, ability to reference your own custom stylesheet was removed)
+* Bugfix: Comments now render properly in Internet Explorer (due to `FBML` reference)
 * Added `title` and `url` attributes to the `<fb:comments>` tag so the Like button links to the correct page when clicked
 * Facebook comments can now be linked to by appending `#facebook-comments` to the end of a post/page's URL
 * Support for 100+ languages is now available (including Arabic, Hebrew, Spanish and all other requested languages)
@@ -95,13 +96,13 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 * Bugfix: WordPress comments are no longer hidden when the Pages only or Posts only options are selected
 
 = 1.4 =
-* Option: include comments on pages only, posts only or both
+* Option: Include comments on pages only, posts only or both
 * Tested and works properly with WordPress 3.0
 
 = 1.3 =
-* Bugfix: settings/XID are no longer lost when upgrading
-* Bugfix: anonymous posting now works properly
-* Option: allow user to hide the `Facebook comments:` title
+* Bugfix: Settings/XID are no longer lost when upgrading
+* Bugfix: Anonymous posting now works properly
+* Option: Allow user to hide the `Facebook comments:` title
 * Added `Settings` link to plugin's action links on the `Plugins` page
 * Redesigned settings page
 * Refactored code to prepare for next release
@@ -110,17 +111,17 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 * Bugfix: Facebook comments will be hidden on posts on which WordPress comments are disabled
 * Bugfix: Facebook comments are retained through upgrades (you **must** set a XID to keep your comments)
 * Feature: add Facebook comments anywhere in your theme by manually inserting `<?php if (function_exists('facebook_comments')) facebook_comments(); ?>` where you'd like them to show up
-* Option: change `Facebook comments:` title to anything you want
-* Option: allow user to reverse the order of the Facebook comments so they're in chronological order (like WordPress comments)
-* Option: allow removal of the grey box behind the composer
-* Option: allow use of external stylesheet to alter the appearance of the Facebook comments section
-* Option: receive Facebook notifications whenever someone posts a comment
-* Option: uncheck `Post comment to my Facebook profile` box by default
+* Option: Change `Facebook comments:` title to anything you want
+* Option: Allow user to reverse the order of the Facebook comments so they're in chronological order (like WordPress comments)
+* Option: Allow removal of the grey box behind the composer
+* Option: Allow use of external stylesheet to alter the appearance of the Facebook comments section
+* Option: Receive Facebook notifications whenever someone posts a comment
+* Option: Uncheck `Post comment to my Facebook profile` box by default
 * Assorted code maintenance
 
 = 1.1 =
-* Fixed bug: plugin's settings are no longer reset/removed when activating/deactivating other plugins
-* New option: ability to hide the Facebook comments box without having to deactivate the plugin (in case you want to keep
+* Fixed bug: Plugin's settings are no longer reset/removed when activating/deactivating other plugins
+* New option: Ability to hide the Facebook comments box without having to deactivate the plugin (in case you want to keep
   your settings)
 * Minor style changes
 
@@ -130,7 +131,7 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 == Upgrade Notice ==
 
 = 2.1.2 =
-This update changes the pre-activation checks to notices to fix the activation issues some people were having. (If you receive a Parse error when activating, please ensure you're running PHP v5.0.0 or higher on your server.)
+This update adds an option to uncheck the Post comment to my Facebook profile box by default, as well as changing the pre-activation checks to notices to fix the activation issues some people were having. (If you receive a Parse error when activating, please ensure you're running PHP v5.0.0 or higher on your server.)
 
 = 2.1.1 =
 This update replaces all file_get_contents() instances with cURL calls. This should bring the plugin back to a healthy state for everyone who doesn't have file fetching by URL enabled on their web server (which was a surprising number of people). Combined comment counts now work when the comments are included manually as well.

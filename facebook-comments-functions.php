@@ -418,16 +418,13 @@
 </script>\n";
 	}
 	
-	/*
-	 * Prints out the <fb:comments/> element by using JavaScript to append it dynamically
-	 *
-	 * Thanks to Shaun Boddez for the code that calculates widths as a percentage
-	 */
-	 
 	function fbComments_printFbCommentsTag($xid, $postTitle, $postUrl, $customStylesheet) {
 		global $fbComments_settings;
 		
-		echo "\t<fb:comments xid='$xid' numposts='{$fbComments_settings['fbComments_numPosts']}' width='{$fbComments_settings['fbComments_width']}' simple='{$fbComments_settings['fbComments_noBox']}' publish_feed='true' reverse='{$fbComments_settings['fbComments_reverseOrder']}' css='$customStylesheet' title='$postTitle' url='$postUrl' notify='true'></fb:comments>
+		// Since the 'publish_feed' option defaults to true, we need to pass it an explicit false if it's turned off
+		$publishToWall = ($fbComments_settings['fbComments_publishToWall']) ? 'true' : 'false';
+		
+		echo "\t<fb:comments xid='$xid' numposts='{$fbComments_settings['fbComments_numPosts']}' width='{$fbComments_settings['fbComments_width']}' simple='{$fbComments_settings['fbComments_noBox']}' publish_feed='$publishToWall' reverse='{$fbComments_settings['fbComments_reverseOrder']}' css='$customStylesheet' title='$postTitle' url='$postUrl' notify='true'></fb:comments>
 </div>\n";
 	}
 ?>
