@@ -20,6 +20,7 @@
 	define('FBCOMMENTS_CSS_HIDELIKE', FBCOMMENTS_PATH . 'css/facebook-comments-hidelike.css');
 	define('FBCOMMENTS_CSS_DARKSITE', FBCOMMENTS_PATH . 'css/facebook-comments-darksite.css');
 	define('FBCOMMENTS_CSS_HIDELIKEANDDARKSITE', FBCOMMENTS_PATH . 'css/facebook-comments-custom.css');
+	define('FBCOMMENTS_CSS_WIDGETS', FBCOMMENTS_PATH . 'css/facebook-comments-widgets.css');
 	
 	if (FBCOMMENTS_ERRORS) {
 		error_reporting(E_ALL); // Ensure all errors and warnings are verbose
@@ -63,7 +64,8 @@
 		'fbComments_titleCss',
 		'fbComments_darkSite',
 		'fbComments_noBox',
-		'fbComments_displayAppIdWarning'
+		'fbComments_displayAppIdWarning',
+		'fbComments_dashNumComments'
 	);
 	
 	$fbComments_defaults = array(
@@ -94,7 +96,8 @@
 		'fbComments_titleCss'					=> 'margin-bottom: 15px; font-size: 140%; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 5px;',
 		'fbComments_darkSite'					=> '',
 		'fbComments_noBox'						=> false,
-		'fbComments_displayAppIdWarning'		=> true
+		'fbComments_displayAppIdWarning'		=> true,
+		'fbComments_dashNumComments'			=> 10
 	);
 	
 	$fbComments_settings = fbComments_getSettings();
@@ -196,22 +199,26 @@
 	add_action('admin_menu', 'fbComments_adminPage');
 	add_filter('plugin_action_links', 'fbComments_settingsLink', 0, 2);
 	
+		
 	/**********************************
 	 Dashboard recent comments widget
-	 **********************************/
+	 **********************************/ 
 	 /**
-	 * Display recent comments from facebook in a widget.
+	 * Display recent comments from facebook in a dashboard widget.
 	 *
-	 * @since 2.1.2
+	 * @since 2.2
 	 */
 	function fbcomments_dashboard_widget_function() {
 		global $fbComments_settings;
-		$atoken =  get_option('fbComments_accessToken');
+
+		wp_register_style('fbComments_widgets', FBCOMMENTS_CSS_WIDGETS, array(), FBCOMMENTS_VER);
+		wp_enqueue_style('fbComments_widgets');
+		$atoken =  $fbComments_settings['fbComments_accessToken'];
 		$format = 'json';
 		$query ="https://api.facebook.com/method/fql.multiquery".
 		"?queries={'comments':+".
 		  "'SELECT+fromid,+text,+id,+time,+username,+xid,+object_id+".
-		  "FROM+comment+WHERE+xid+"."IN+(SELECT+xid+FROM+comments_info+WHERE+app_id+%3D+128167390587180)".
+		  "FROM+comment+WHERE+xid+"."IN+(SELECT+xid+FROM+comments_info+WHERE+app_id+%3D+{$fbComments_settings['fbComments_appId']})".
 		  "ORDER+BY+time+desc',".
 		"'users':+'SELECT+id,+name,+url,+pic_square+FROM+profile+".
 		  "WHERE+id+IN+(SELECT+fromid+FROM+%23comments)'}".
@@ -225,6 +232,7 @@
 		$commentsJson = json_decode($result);
 		$comments = $commentsJson;
 		$ncomms = sizeof($comments[0]->fql_result_set);
+		$dcomms = $ncomms < $fbComments_settings['fbComments_dashNumComments'] ? $ncomms : $fbComments_settings['fbComments_dashNumComments'];
 	
 		
 		if ($ncomms == 0) { echo 'No Comments!'; }
@@ -238,8 +246,7 @@
 				"<div id=\"fb-root\"></div>
 				<script>
 				  window.fbAsyncInit = function() {
-					FB.init({appId: '{$fbComments_settings['fbComments_appId']}', status: true, cookie: true,
-							 xfbml: true});
+					FB.init({appId: '{$fbComments_settings['fbComments_appId']}', status: true, cookie: true, xfbml: true});
 				  };
 				  (function() {
 					var e = document.createElement('script'); e.async = true;
@@ -248,6 +255,10 @@
 					document.getElementById('fb-root').appendChild(e);
 				  }());
 				</script>"
+				
+				// loading script here because wp_print_scripts doesn't seem to
+				.'<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>'
+				
 				// should probably change this to class so that it validates
 				.'<div id="the-comment-list" class="list:comment" style="margin-top: -1em">';
 			
@@ -255,13 +266,19 @@
 			$users = $comments[1]->fql_result_set;
 			$comments = $comments[0]->fql_result_set;
 			
-			for ($i=0;$i<$ncomms;$i++) {						
-				$index = array_search($comments[$i]->fromid,$users);
+			for ($i=0;$i<$ncomms;$i++) {
+				// find matching user
+				for ($j=0;$j<count($users);$j++) {
+					if ($comments[$i]->fromid == $users[$j]->id) {
+						$index=$j;
+						break;
+					}
+				}
 				
 				// Comment username and Link
 				$username = $comments[$i]->fromid;
 				if ($username == '1309634065') {	// if anon user
-					$username = '<span class="aname">'+ $comments[$i]->username +'</span>';
+					$username = '<span class="aname">$comments[$i]->username</span>';
 				} else {
 					$username = '<a target="_blank" href="https://www.facebook.com/profile.php?id='
 						. $username
@@ -276,8 +293,8 @@
 				// Processes \r\n's first so they aren't converted twice.
 				$commenttext = str_replace($order, $replace, $commenttext);
 				
-				// post url, linking directly to post possible?
-				$commenturl = '../?p='.substr($comments[$i]->xid,20);
+				// url of post/page on which comment was made
+				$commenturl = get_permalink(substr($comments[$i]->xid,20));
 				
 				// make pretty alternations
 				$parity = ($i&1) 
@@ -292,7 +309,7 @@
 					'<img alt="" src="'.$imgurl.'" class="avatar avatar-50 photo" height="50" width="50"/>'.
 					'<div class="dashboard-comment-wrap">'.
 						'<h4 class="comment-meta"> From '.
-							'<cite class="comment-author"><a href="https://www.facebook.com/profile.php?id=100001765242194">'.$username.'</a></cite> on '.
+							'<cite class="comment-author"><a href="https://www.facebook.com/profile.php?id='.$comments[$i]->fromid.'">'.$username.'</a></cite> on '.
 							'<a href="'.$commenturl.'&action=edit">'.$commenturl.'</a>
 							<abbr style="font-size:.8em" title="'.date('r',$comments[$i]->time).'"> '.date('d M Y',$comments[$i]->time).'</abbr>
 							<span class="approve">[Pending]</span>'.
@@ -307,10 +324,9 @@
 								delete
 							</a>
 							
-							</span>
-							<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-							<script>'.
-							"$('#deletecomm".$i."').click(function(data) {
+							</span>'.
+							"<script>
+							$('#deletecomm".$i."').click(function(data) {
 								FB.api({
 										method: 'comments.remove',"
 										.'comment_id: "'.$comments[$i]->id.'", '
@@ -342,6 +358,189 @@
 	} 
 	// Hook into the 'wp_dashboard_setup' action to register our other functions
 	add_action('wp_dashboard_setup', 'fbcomments_add_dashboard_widgets' );
+	
+	/**********************************
+	 Page recent comments widget
+	 **********************************/
+	/* add styles before wp_head is loaded
+	  see: http://bit.ly/igYFYu 
+	*/
+	function conditionally_add_scripts_and_styles($posts){
+		if (empty($posts)) return $posts;
+ 
+		// enqueue here
+		wp_enqueue_style('fbc_rc_widgets-style', FBCOMMENTS_CSS_WIDGETS);
+	 
+		return $posts;	 
+	}
+	add_filter('the_posts', 'conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
+	/**
+	 * Recent_Comments widget class
+	 *
+	 * @since 2.2
+	 */
+	class FBCRC_Widget extends WP_Widget {
+		/** constructor */
+		function FBCRC_Widget() {
+			$widget_ops = array( 'description' => __('The most recent Facebook comments.') );
+			parent::WP_Widget(false, $name = 'Recent Facebook Comments', $widget_ops);	
+		}
+
+		/** @see WP_Widget::widget */
+		function widget($args, $instance) {		
+			extract( $args );
+			$title = apply_filters('widget_title', $instance['title']);
+			
+			global $fbComments_settings;
+			$atoken =  $fbComments_settings['fbComments_accessToken'];
+			$format = 'json';
+			$query ="https://api.facebook.com/method/fql.multiquery".
+			"?queries={'comments':+".
+			  "'SELECT+fromid,+text,+id,+time,+username,+xid,+object_id+".
+			  "FROM+comment+WHERE+xid+"."IN+(SELECT+xid+FROM+comments_info+WHERE+app_id+%3D+{$fbComments_settings['fbComments_appId']})".
+			  "ORDER+BY+time+desc',".
+			"'users':+'SELECT+id,+name,+url,+pic_square+FROM+profile+".
+			  "WHERE+id+IN+(SELECT+fromid+FROM+%23comments)'}".
+			'&access_token='.$atoken.'&format='.$format;'&access_token='.$atoken.'&format='.$format;
+			$result = fbComments_getUrl($query);
+			
+			// so json_decode doesn't return floats
+			$result = preg_replace('/"fromid":([0-9]*)/', '"fromid":"\1"', $result);
+			$result = preg_replace('/"id":([0-9]+)/', '"id":"\1"', $result);
+			
+			$commentsJson = json_decode($result);
+			$comments = $commentsJson;
+			
+			if ( ! $number = (int) $instance['number'] )
+				$number = 5;
+			else if ( $number < 1 )
+				$number = 1;
+			$ncomms = sizeof($comments[0]->fql_result_set);
+			
+			// if no comments, display no comments; otherwise display the greater of $ncomms and $number comments
+			$ncomms  = $ncomms == 0 ? 0 : ($ncomms < $number ? $ncomms : $number);
+			
+			$output = '<ul id="fbc_rc_widget">';
+			
+			$parity = '';
+			$users = $comments[1]->fql_result_set;
+			$comments = $comments[0]->fql_result_set;
+			
+			$show_avatar = isset($instance['show_avatar']) ? $instance['show_avatar'] : true;
+			
+			for ($i=0;$i<$ncomms;$i++) {
+				// find matching user
+				for ($j=0;$j<count($users);$j++) {
+					if ($comments[$i]->fromid == $users[$j]->id) {
+						$index=$j;
+						break;
+					}
+				}
+				
+				// Comment meta
+				$username = $comments[$i]->fromid;
+				if ($username == '1309634065') {	// if anon user
+					$username = $comments[$i]->username;
+				} else {
+					$username = '<a target="_blank" href="https://www.facebook.com/profile.php?id='.$username.'">'.$users[$index]->name.'</a>';
+				}
+				
+				// print user defined number of words, if there are less than this, don't trim
+				$commenttext = trim($comments[$i]->text, ' ');
+				$nwords = count(explode(" ",$commenttext));
+				$dwords = $nwords <= $instance['word_count'] ? $nwords : $instance['word_count'];
+				if ($nwords > $dwords) {
+					preg_match("/^(\S+\s+){0,$dwords}/", $commenttext, $matches); // match spaces (nth space will be at end of nth word)
+					$commenttext = trim($matches[0]) . '[...]';
+				}
+				
+				// print line breaks as such
+				$order   = array("\r\n", "\n", "\r"); // Processes \r\n's first so they aren't converted twice.
+				$replace = '<br />';
+				$commenttext = str_replace($order, $replace, $commenttext);
+				
+				// url of post/page on which comment was made
+				$post_id = substr($comments[$i]->xid,20);
+				$commenturl = get_permalink($post_id);
+				
+				// to allow alternating styles on comments
+				$parity = ($i&1) ? "odd": "even";
+
+				// display avatar only if option is checked
+				if ($show_avatar) {
+					$imgurl = $users[$index]->pic_square;
+					$imgclass = '';
+				} else {
+					$imgurl = $users[$index]->pic_square;
+					$imgclass = 'style="display:none"';
+				}
+				
+				// what will be written to the widget
+				$output .=
+				'<li class="fbc_rc_comment '.$parity.'">
+					<div class="fbc_rc_comment-meta">
+						<cite class="fbc_rc_comment-author"><a href="https://www.facebook.com/profile.php?id='.$comments[$i]->fromid.'">'.$username.'</a></cite> 
+						<abbr class="fbc_rc_date" title="'.date('r',$comments[$i]->time).'">'.date('d M Y',$comments[$i]->time).'</abbr>
+					</div>
+					<img alt="" src="'.$imgurl.'" class="avatar" height="50" width="50" '.$imgclass.' />
+					<div class="fbc_rc_text">'.$commenttext.'</div>
+					<div class="fbc_rc_permalink"><a href="'.$commenturl.'"> '.get_post($post_id)->post_title.'</a></div>
+				</li>';
+			}
+			$output .= '</ul>';
+	
+			// print everything out
+			echo $before_widget;
+			if ( $title )
+				echo $before_title . $title . $after_title;
+			echo $output;
+			echo $after_widget; 
+		}
+
+		/** @see WP_Widget::update */
+		function update($new_instance, $old_instance) {		
+			$instance = $old_instance;
+			$instance['title'] = strip_tags($new_instance['title']);
+			$instance['number'] = (int) $new_instance['number'];
+			$instance['word_count'] = (int) $new_instance['word_count'];
+			if ( isset($new_instance['show_avatar']) )
+				$instance['show_avatar'] = 1;
+			else
+				$instance['show_avatar'] = 0;
+			return $instance;
+		}
+
+		/** @see WP_Widget::form */
+		function form($instance) {
+			$instance = wp_parse_args( (array) $instance, array( 'show_avatar' => true ) );		
+			$title = isset($instance['title']) ? esc_attr($instance['title']) : 'Recent Comments';
+			$number = isset($instance['number']) ? absint($instance['number']) : 5;
+			$word_count = isset($instance['word_count']) ? absint($instance['word_count']) : 50;
+			
+			?>
+			 <p>
+			  <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> 
+			  <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+			</p>
+			<p>
+			  <label for="<?php echo $this->get_field_id('number'); ?>"><?php _e('Max number of comments to show:'); ?></label>
+			  <input id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" type="text" value="<?php echo $number; ?>" size="3" />
+			</p>
+			<p>
+			  <label for="<?php echo $this->get_field_id('word_count'); ?>"><?php _e('Max number of words per comment to show:'); ?></label>
+			  <input id="<?php echo $this->get_field_id('word_count'); ?>" name="<?php echo $this->get_field_name('word_count'); ?>" type="text" value="<?php echo $word_count; ?>" size="3" />
+			</p>
+			<p>
+			  <input class="checkbox" type="checkbox" <?php checked( $instance['show_avatar'], true ); ?> id="<?php echo $this->get_field_id( 'show_avatar' ); ?>" name="<?php echo $this->get_field_name( 'show_avatar' ); ?>" />
+			  <label for="<?php echo $this->get_field_id( 'show_avatar' ); ?>">Check to display avatar</label>
+			</p>
+			<?php 
+		}
+
+	} // class FBCRC_Widget
+	
+	// register FBCRC_Widget widget
+	add_action('widgets_init', create_function('', 'return register_widget("FBCRC_Widget");'));
 		
 		
 	/**********************************

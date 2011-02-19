@@ -311,6 +311,14 @@
 			</div>
 		</div>
 		
+		<div id="poststuff" class="postbox">
+			<h3><?php _e('Dashboard Widget Settings'); ?></h3>
+			
+			<div class="inside">
+				<p><?php _e('Number of Comments to Display: '); ?><input type="text" name="fbComments_dashNumComments" value="<?php echo $fbComments_settings['fbComments_dashNumComments']; ?>" size="5" maxlength="3"></p>
+			</div>
+		</div>
+		
 		<input type="hidden" name="fbComments_update" value="true" />
 		
 		<input type="submit" class="button-primary" value="<?php _e('Update Options'); ?>" />
