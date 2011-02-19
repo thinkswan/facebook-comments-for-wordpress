@@ -197,6 +197,154 @@
 	add_filter('plugin_action_links', 'fbComments_settingsLink', 0, 2);
 	
 	/**********************************
+	 Dashboard recent comments widget
+	 **********************************/
+	 /**
+	 * Display recent comments from facebook in a widget.
+	 *
+	 * @since 2.1.2
+	 */
+	function fbcomments_dashboard_widget_function() {
+		global $fbComments_settings;
+		$atoken =  get_option('fbComments_accessToken');
+		$format = 'json';
+		$query ="https://api.facebook.com/method/fql.multiquery".
+		"?queries={'comments':+".
+		  "'SELECT+fromid,+text,+id,+time,+username,+xid,+object_id+".
+		  "FROM+comment+WHERE+xid+"."IN+(SELECT+xid+FROM+comments_info+WHERE+app_id+%3D+128167390587180)".
+		  "ORDER+BY+time+desc',".
+		"'users':+'SELECT+id,+name,+url,+pic_square+FROM+profile+".
+		  "WHERE+id+IN+(SELECT+fromid+FROM+%23comments)'}".
+		'&access_token='.$atoken.'&format='.$format;'&access_token='.$atoken.'&format='.$format;
+		$result = fbComments_getUrl($query);
+		
+		// so json_decode doesn't return floats
+		$result = preg_replace('/"fromid":([0-9]*)/', '"fromid":"\1"', $result);
+		$result = preg_replace('/"id":([0-9]+)/', '"id":"\1"', $result);
+		
+		$commentsJson = json_decode($result);
+		$comments = $commentsJson;
+		$ncomms = sizeof($comments[0]->fql_result_set);
+	
+		
+		if ($ncomms == 0) { echo 'No Comments!'; }
+		else {
+			$ncomms  = $ncomms < 10 ? $ncomms : 10;
+			
+			$htmlout = 
+				// using the old api to make calling from js easier
+				// the new graph api method is much cleaner, but it causes problems in opera 
+				// since it returns a value, which opera then prompts the user to open or save
+				"<div id=\"fb-root\"></div>
+				<script>
+				  window.fbAsyncInit = function() {
+					FB.init({appId: '{$fbComments_settings['fbComments_appId']}', status: true, cookie: true,
+							 xfbml: true});
+				  };
+				  (function() {
+					var e = document.createElement('script'); e.async = true;
+					e.src = document.location.protocol +
+					  '//connect.facebook.net/en_US/all.js';
+					document.getElementById('fb-root').appendChild(e);
+				  }());
+				</script>"
+				// should probably change this to class so that it validates
+				.'<div id="the-comment-list" class="list:comment" style="margin-top: -1em">';
+			
+			$parity = '';
+			$users = $comments[1]->fql_result_set;
+			$comments = $comments[0]->fql_result_set;
+			
+			for ($i=0;$i<$ncomms;$i++) {						
+				$index = array_search($comments[$i]->fromid,$users);
+				
+				// Comment username and Link
+				$username = $comments[$i]->fromid;
+				if ($username == '1309634065') {	// if anon user
+					$username = '<span class="aname">'+ $comments[$i]->username +'</span>';
+				} else {
+					$username = '<a target="_blank" href="https://www.facebook.com/profile.php?id='
+						. $username
+						.'">'. $users[$index]->name .'</a>';
+				}
+				
+				// make pretty
+				$commenttext = $comments[$i]->text;
+				$order   = array("\r\n", "\n", "\r");
+				$replace = '<br />';
+
+				// Processes \r\n's first so they aren't converted twice.
+				$commenttext = str_replace($order, $replace, $commenttext);
+				
+				// post url, linking directly to post possible?
+				$commenturl = '../?p='.substr($comments[$i]->xid,20);
+				
+				// make pretty alternations
+				$parity = ($i&1) 
+					? "comment byuser comment-author-admin odd alt thread-odd thread-alt depth-1 comment-item approved": 
+					"comment byuser comment-author-admin even thread-even depth-1 comment-item approved";
+
+				$imgurl = $users[$index]->pic_square;
+				
+				// what will be written to the dashboard widget
+				$htmlout .=
+				'<div class="'.$parity.'">'.
+					'<img alt="" src="'.$imgurl.'" class="avatar avatar-50 photo" height="50" width="50"/>'.
+					'<div class="dashboard-comment-wrap">'.
+						'<h4 class="comment-meta"> From '.
+							'<cite class="comment-author"><a href="https://www.facebook.com/profile.php?id=100001765242194">'.$username.'</a></cite> on '.
+							'<a href="'.$commenturl.'&action=edit">'.$commenturl.'</a>
+							<abbr style="font-size:.8em" title="'.date('r',$comments[$i]->time).'"> '.date('d M Y',$comments[$i]->time).'</abbr>
+							<span class="approve">[Pending]</span>'.
+						'</h4>
+						<blockquote>
+							<p>'.$commenttext.'</p>
+						</blockquote>
+						<p class="row-actions">
+							<span class="trash wallkit_actionset">
+							
+							<a id="deletecomm'.$i.'" href="#" class="delete vim-d vim-destructive" title="Delete this comment">
+								delete
+							</a>
+							
+							</span>
+							<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+							<script>'.
+							"$('#deletecomm".$i."').click(function(data) {
+								FB.api({
+										method: 'comments.remove',"
+										.'comment_id: "'.$comments[$i]->id.'", '
+										.'xid: "'.$comments[$i]->xid.'", '
+										.'access_token: "'.$atoken.'", '
+									."},
+									function(response) {
+										if (!response || response.error_code) {
+											alert('ERROR: Failed to delete comment.');
+										} else {
+											alert('Comment Deleted');
+											window.location.reload();
+										}
+									});
+							});
+							</script>
+						</p>
+					</div>
+				</div>";
+			}
+			$htmlout .= '</div>';
+			print_r($htmlout);
+		}
+	} 
+
+	// Create the function used in the action hook
+	function fbcomments_add_dashboard_widgets() {
+		wp_add_dashboard_widget('fbcomments_dashboard_widget', 'Recent Facebook comments', 'fbcomments_dashboard_widget_function');	
+	} 
+	// Hook into the 'wp_dashboard_setup' action to register our other functions
+	add_action('wp_dashboard_setup', 'fbcomments_add_dashboard_widgets' );
+		
+		
+	/**********************************
 	 Program entry point
 	 **********************************/
 	
