@@ -96,6 +96,9 @@
 			CURLOPT_URL 		   => "$url",
 			CURLOPT_RETURNTRANSFER => true, // Return webpage as a string instead of directly outputting it
 			CURLOPT_CONNECTTIMEOUT => $timeout
+			// uncomment following two lines if working locally (workaround for https using xampp, wamp, etc.)
+			//,CURLOPT_SSL_VERIFYPEER => false,
+			//CURLOPT_SSL_VERIFYHOST => 2
 		);
 		
 		$ch = curl_init();
