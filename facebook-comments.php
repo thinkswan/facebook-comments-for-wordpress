@@ -213,6 +213,9 @@
 
 		wp_register_style('fbComments_widgets', FBCOMMENTS_CSS_WIDGETS, array(), FBCOMMENTS_VER);
 		wp_enqueue_style('fbComments_widgets');
+		
+		// needed for fb api call? excep 104 without it
+		fbComments_storeAccessToken();
 		$atoken =  $fbComments_settings['fbComments_accessToken'];
 		
 		$fb = fbComments_getFbApi();
@@ -397,7 +400,7 @@
 			$title = apply_filters('widget_title', $instance['title']);
 			
 			global $fbComments_settings;
-			$atoken =  $fbComments_settings['fbComments_accessToken'];
+			$atoken = $fbComments_settings['fbComments_accessToken'];
 			
 			$fb = fbComments_getFbApi();
 		
