@@ -95,9 +95,10 @@
 		$options = array(
 			CURLOPT_URL 		   => "$url",
 			CURLOPT_RETURNTRANSFER => true, // Return webpage as a string instead of directly outputting it
-			CURLOPT_CONNECTTIMEOUT => $timeout
+			CURLOPT_CONNECTTIMEOUT => $timeout,
+			CURLOPT_USERAGENT      => 'user_agent', 'facebook comments for WordPress plugin',
 			// uncomment following two lines if working locally (workaround for https using xampp, wamp, etc.)
-			//,CURLOPT_SSL_VERIFYPEER => false,
+			//CURLOPT_SSL_VERIFYPEER => false,
 			//CURLOPT_SSL_VERIFYHOST => 2
 		);
 		

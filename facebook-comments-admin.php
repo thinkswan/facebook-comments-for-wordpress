@@ -2,26 +2,6 @@
 	if (FBCOMMENTS_ERRORS) {
 		error_reporting(E_ALL); // Ensure all errors and warnings are verbose
 	}
-	function get_url($url) {
-		ini_set('user_agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9');
-		$cparams = array(
-			'http' => array(
-			'method' => 'GET',
-			'ignore_errors' => true
-			)
-		);
-		
-		$context = stream_context_create($cparams);
-		$fp = fopen($url, 'rb', false, $context);
-		
-		if (!$fp) { $res = false; } 
-		else { $res = stream_get_contents($fp); }
-
-		if ($res === false) {
-			throw new Exception("GET $url failed: $php_errormsg");
-		}
-		return $res;
-	}
 	
 	// If the user submitted the form, update the database with the new settings
 	if (isset($_POST['fbComments_update']) && $_POST['fbComments_update'] == 'true') {
@@ -29,7 +9,7 @@
 		$errors = false;
 	
 		$fbComments_settings['fbComments_appId'] = (isset($_POST['fbComments_appId']) && trim($_POST['fbComments_appId']) != '') ? esc_html(stripslashes(trim($_POST['fbComments_appId']))) : null;
-		$response = get_url('http://www.facebook.com/apps/application.php?id='.$fbComments_settings['fbComments_appId']);
+		$response = "https://www.facebook.com/apps/application.php?".http_build_query(array('id'=>$fbComments_settings['fbComments_appId']));
 		$needle = 'wall';
 		if ( strpos($response, $needle) == false ) {
 			update_option('fbComments_appId', '0');
