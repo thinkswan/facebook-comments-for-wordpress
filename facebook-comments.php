@@ -270,10 +270,10 @@
 			$users = $comments[1][fql_result_set];
 			$comments = $comments[0][fql_result_set];
 			
-			for ($i=0;$i<$ncomms;$i++) {
+			for ($i=0,$par=0;$i<$ncomms;$i++,$par++) {
 				// for people who use the same app id for more than one site,
 				// only return results unique to this xid
-				if ( strncmp($comments[$i][xid],$fbComments_settings['fbComments_xid'],15) ) continue;
+				if ( strncmp($comments[$i][xid],$fbComments_settings['fbComments_xid'],15) ) { $par--; continue; }
 				
 				// find matching user
 				for ($j=0;$j<count($users);$j++) {
@@ -305,7 +305,7 @@
 				$commenturl = get_permalink(substr($comments[$i][xid],20));
 				
 				// make pretty alternations
-				$parity = ($i&1) 
+				$parity = ($par&1) 
 					? "comment byuser comment-author-admin odd alt thread-odd thread-alt depth-1 comment-item approved": 
 					"comment byuser comment-author-admin even thread-even depth-1 comment-item approved";
 
@@ -436,8 +436,8 @@
 			
 			$show_avatar = isset($instance['show_avatar']) ? $instance['show_avatar'] : true;
 			
-			for ($i=0;$i<$ncomms;$i++) {
-				if ( strncmp($comments[$i][xid],$fbComments_settings['fbComments_xid'],15) ) continue;
+			for ($i=0,$par=0;$i<$ncomms;$i++,$par++) {
+				if ( strncmp($comments[$i][xid],$fbComments_settings['fbComments_xid'],15) ) { $par--; continue; }
 				// find matching user
 				for ($j=0;$j<count($users);$j++) {
 					if ($comments[$i][fromid] == $users[$j][id]) {
@@ -473,7 +473,7 @@
 				$commenturl = get_permalink($post_id);
 				
 				// to allow alternating styles on comments
-				$parity = ($i&1) ? "odd": "even";
+				$parity = ($par&1) ? "odd": "even";
 
 				// display avatar only if option is checked
 				if ($show_avatar) {
