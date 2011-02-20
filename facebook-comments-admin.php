@@ -9,7 +9,7 @@
 		$errors = false;
 	
 		$fbComments_settings['fbComments_appId'] = (isset($_POST['fbComments_appId']) && trim($_POST['fbComments_appId']) != '') ? esc_html(stripslashes(trim($_POST['fbComments_appId']))) : null;
-		$response = "https://www.facebook.com/apps/application.php?".http_build_query(array('id'=>$fbComments_settings['fbComments_appId']));
+		$response = fbComments_getUrl("https://www.facebook.com/apps/application.php?".http_build_query(array('id'=>$fbComments_settings['fbComments_appId'])));
 		$needle = 'wall';
 		if ( strpos($response, $needle) == false ) {
 			update_option('fbComments_appId', '0');
