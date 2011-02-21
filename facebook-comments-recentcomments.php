@@ -13,6 +13,7 @@
 
 		wp_register_style('fbComments_widgets', FBCOMMENTS_CSS_WIDGETS, array(), FBCOMMENTS_VER);
 		wp_enqueue_style('fbComments_widgets');
+		
 
 		// needed for fb api call? excep 104 without it
 		fbComments_storeAccessToken();
@@ -59,9 +60,6 @@
 					document.getElementById('fb-root').appendChild(e);
 				  }());
 				</script>"
-
-				// loading script here because wp_print_scripts doesn't seem to
-				.'<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>'
 
 				// should probably change this to class so that it validates
 				.'<div id="the-comment-list" class="list:comment" style="margin-top: -1em">';
@@ -347,5 +345,12 @@
 
 	} // class FBCRC_Widget
 
+function fbComments_dashboard_widget_init() {
+	if (is_admin()) {
+		wp_deregister_script( 'jquery' );
+		wp_register_script( 'jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js');
+		wp_enqueue_script('jquery');
+	}
+}
 
 ?>

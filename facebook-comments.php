@@ -203,7 +203,9 @@
 	add_filter('plugin_action_links', 'fbComments_settingsLink', 0, 2);
 
 	// hook for admin dashboard widget
+	add_action('init', 'fbcomments_dashboard_widget_init'); // load jquery
 	add_action('wp_dashboard_setup', 'fbcomments_add_dashboard_widgets' );
+	
 
 	// register FBCRC_Widget widget
 	add_filter('the_posts', 'conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
