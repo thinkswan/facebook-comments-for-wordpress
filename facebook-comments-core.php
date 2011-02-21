@@ -84,27 +84,25 @@ function fbComments_getRandXid($length=15) {
 	return $rand;
 }
 
-// Since file_get_contents() is disabled on most webservers, use cURL instead
+// sugar for calling wp_remote_get
 function fbComments_getUrl($url) {
-	fbComments_log('In ' . __FUNCTION__ . "(url=$url)");
-	$timeout = 5; // Set timeout to 5s
-	$options = array(
-		CURLOPT_URL 		   => "$url",
-		CURLOPT_RETURNTRANSFER => true, // Return webpage as a string instead of directly outputting it
-		CURLOPT_CONNECTTIMEOUT => $timeout,
-		CURLOPT_USERAGENT      => 'user_agent', 'facebook comments for WordPress plugin',
-		// uncomment following two lines if working locally (workaround for https using xampp, wamp, etc.)
-		//CURLOPT_SSL_VERIFYPEER => false,
-		//CURLOPT_SSL_VERIFYHOST => 2
-	);
 
-	$ch = curl_init();
-	curl_setopt_array($ch, $options);
-	$file_contents = curl_exec($ch);
-	curl_close($ch);
+	$file_contents = wp_remote_get($url,
+				  $args = array('method' 		=> 'GET',
+								'timeout' 		=> '5',
+								'redirection' 	=> '5',
+								'user-agent' 	=> 'WordPress facebook comments plugin',
+								'blocking'		=> true,
+								'compress'		=> false,
+								'decompress'	=> true,
+								'sslverify'		=> false
+						));
+	$file_contents = $file_contents['body'];
+
+	fbComments_log('In ' . __FUNCTION__ . "(url=$url)");
 
 	if (!$file_contents) {
-		fbComments_log('    FAILED to retrieve content via cURL');
+		fbComments_log('    FAILED to retrieve content via wp_remote_get');
 	}
 
 	return $file_contents;
