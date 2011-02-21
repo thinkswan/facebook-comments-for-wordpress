@@ -19,7 +19,7 @@
 								'decompress' => true,
 								'sslverify' => false
 						));
-		$response = $response[body];
+		$response = $response['body'];
 		$needle = 'wall';
 		if ( strpos($response, $needle) == false ) {
 			update_option('fbComments_appId', '0');
@@ -111,6 +111,14 @@
 		
 		$fbComments_settings['fbComments_noBox'] = (isset($_POST['fbComments_noBox']) && $_POST['fbComments_noBox'] == 'true') ? true : false;
 		update_option('fbComments_noBox', $fbComments_settings['fbComments_noBox']);
+		
+		if (intval($_POST['fbComments_dashNumComments']) > 0) {
+			$fbComments_settings['fbComments_dashNumComments'] = intval($_POST['fbComments_dashNumComments']);
+			update_option('fbComments_dashNumComments', $fbComments_settings['fbComments_dashNumComments']);
+		} else {
+			$fbComments_settings['fbComments_dashNumComments'] = get_option('fbComments_dashNumComments');
+		}
+		
 		
 		if ($errors == false)
 			echo '<div class="updated"><p><strong>' . __('Options saved.') . '</strong></p></div>';
