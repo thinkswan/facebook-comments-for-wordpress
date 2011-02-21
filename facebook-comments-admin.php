@@ -9,7 +9,17 @@
 		$errors = false;
 	
 		$fbComments_settings['fbComments_appId'] = (isset($_POST['fbComments_appId']) && trim($_POST['fbComments_appId']) != '') ? esc_html(stripslashes(trim($_POST['fbComments_appId']))) : null;
-		$response = fbComments_getUrl("https://www.facebook.com/apps/application.php?".http_build_query(array('id'=>$fbComments_settings['fbComments_appId'])));
+		$response = wp_remote_get("https://www.facebook.com/apps/application.php?".http_build_query(array('id'=>$fbComments_settings['fbComments_appId'])),
+					$args = array('method' => 'GET', 
+								'timeout' => '5',
+								'redirection' => '5',
+								'user-agent' => 'WordPress facebook comments plugin',
+								'blocking' => true,
+								'compress' => false,
+								'decompress' => true,
+								'sslverify' => false
+						));
+		$response = $response[body];
 		$needle = 'wall';
 		if ( strpos($response, $needle) == false ) {
 			update_option('fbComments_appId', '0');
