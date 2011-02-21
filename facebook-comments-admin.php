@@ -2,15 +2,15 @@
 	if (FBCOMMENTS_ERRORS) {
 		error_reporting(E_ALL); // Ensure all errors and warnings are verbose
 	}
-	
+
 	// If the user submitted the form, update the database with the new settings
 	if (isset($_POST['fbComments_update']) && $_POST['fbComments_update'] == 'true') {
 		global $fbComments_defaults;
 		$errors = false;
-	
+
 		$fbComments_settings['fbComments_appId'] = (isset($_POST['fbComments_appId']) && trim($_POST['fbComments_appId']) != '') ? esc_html(stripslashes(trim($_POST['fbComments_appId']))) : null;
 		$response = wp_remote_get("https://www.facebook.com/apps/application.php?".http_build_query(array('id'=>$fbComments_settings['fbComments_appId'])),
-					$args = array('method' => 'GET', 
+					$args = array('method' => 'GET',
 								'timeout' => '5',
 								'redirection' => '5',
 								'user-agent' => 'WordPress facebook comments plugin',
@@ -28,98 +28,98 @@
 		} else {
 			update_option('fbComments_appId', $fbComments_settings['fbComments_appId']);
 		}
-		
+
 		$fbComments_settings['fbComments_appSecret'] = (isset($_POST['fbComments_appSecret']) && trim($_POST['fbComments_appSecret']) != '') ? esc_html(stripslashes(trim($_POST['fbComments_appSecret']))) : null;
 		update_option('fbComments_appSecret', $fbComments_settings['fbComments_appSecret']);
-		
+
 		$fbComments_settings['fbComments_xid'] = (isset($_POST['fbComments_xid']) && trim($_POST['fbComments_xid']) != '') ? esc_html(stripslashes(trim($_POST['fbComments_xid']))) : get_option('fbComments_xid');
 		update_option('fbComments_xid', $fbComments_settings['fbComments_xid']);
-		
+
 		$fbComments_settings['fbComments_includeFbJs'] = (isset($_POST['fbComments_includeFbJs']) && $_POST['fbComments_includeFbJs'] == 'true') ? true : false;
 		update_option('fbComments_includeFbJs', $fbComments_settings['fbComments_includeFbJs']);
-		
+
 		$fbComments_settings['fbComments_includeFbJsOldWay'] = (isset($_POST['fbComments_includeFbJsOldWay']) && $_POST['fbComments_includeFbJsOldWay'] == 'true') ? true : false;
 		update_option('fbComments_includeFbJsOldWay', $fbComments_settings['fbComments_includeFbJsOldWay']);
-		
+
 		$fbComments_settings['fbComments_includeFbmlLangAttr'] = (isset($_POST['fbComments_includeFbmlLangAttr']) && $_POST['fbComments_includeFbmlLangAttr'] == 'true') ? true : false;
 		update_option('fbComments_includeFbmlLangAttr', $fbComments_settings['fbComments_includeFbmlLangAttr']);
-		
+
 		$fbComments_settings['fbComments_includeOpenGraphLangAttr'] = (isset($_POST['fbComments_includeOpenGraphLangAttr']) && $_POST['fbComments_includeOpenGraphLangAttr'] == 'true') ? true : false;
 		update_option('fbComments_includeOpenGraphLangAttr', $fbComments_settings['fbComments_includeOpenGraphLangAttr']);
-		
+
 		$fbComments_settings['fbComments_includeOpenGraphMeta'] = (isset($_POST['fbComments_includeOpenGraphMeta']) && $_POST['fbComments_includeOpenGraphMeta'] == 'true') ? true : false;
 		update_option('fbComments_includeOpenGraphMeta', $fbComments_settings['fbComments_includeOpenGraphMeta']);
-		
+
 		$fbComments_settings['fbComments_includeFbComments'] = (isset($_POST['fbComments_includeFbComments']) && $_POST['fbComments_includeFbComments'] == 'true') ? true : false;
 		update_option('fbComments_includeFbComments', $fbComments_settings['fbComments_includeFbComments']);
-		
+
 		$fbComments_settings['fbComments_hideWpComments'] = (isset($_POST['fbComments_hideWpComments']) && $_POST['fbComments_hideWpComments'] == 'true') ? true : false;
 		update_option('fbComments_hideWpComments', $fbComments_settings['fbComments_hideWpComments']);
-		
+
 		$fbComments_settings['fbComments_combineCommentCounts'] = (isset($_POST['fbComments_combineCommentCounts']) && $_POST['fbComments_combineCommentCounts'] == 'true') ? true : false;
 		update_option('fbComments_combineCommentCounts', $fbComments_settings['fbComments_combineCommentCounts']);
-		
+
 		$fbComments_settings['fbComments_notify'] = (isset($_POST['fbComments_notify']) && $_POST['fbComments_notify'] == 'true') ? true : false;
 		update_option('fbComments_notify', $fbComments_settings['fbComments_notify']);
-		
+
 		$fbComments_settings['fbComments_language'] = (isset($_POST['fbComments_language'])) ? $_POST['fbComments_language'] : $fbComments_defaults['fbComments_language'];
 		update_option('fbComments_language', $fbComments_settings['fbComments_language']);
-		
+
 		$fbComments_settings['fbComments_displayTitle'] = (isset($_POST['fbComments_displayTitle']) && $_POST['fbComments_displayTitle'] == 'true') ? true : false;
 		update_option('fbComments_displayTitle', $fbComments_settings['fbComments_displayTitle']);
-		
+
 		$fbComments_settings['fbComments_title'] = esc_html(stripslashes($_POST['fbComments_title']));
 		update_option('fbComments_title', $fbComments_settings['fbComments_title']);
-		
+
 		if (intval($_POST['fbComments_numPosts']) > 0) {
 			$fbComments_settings['fbComments_numPosts'] = intval($_POST['fbComments_numPosts']);
 			update_option('fbComments_numPosts', $fbComments_settings['fbComments_numPosts']);
 		} else {
 			$fbComments_settings['fbComments_numPosts'] = get_option('fbComments_numPosts');
 		}
-		
+
 		if (intval($_POST['fbComments_width']) > 0) {
 			$fbComments_settings['fbComments_width'] = intval($_POST['fbComments_width']);
 			update_option('fbComments_width', $fbComments_settings['fbComments_width']);
 		} else {
 			$fbComments_settings['fbComments_width'] = get_option('fbComments_width');
 		}
-		
+
 		$fbComments_settings['fbComments_displayLocation'] = (isset($_POST['fbComments_displayLocation'])) ? $_POST['fbComments_displayLocation'] : $fbComments_defaults['fbComments_displayLocation'];
 		update_option('fbComments_displayLocation', $fbComments_settings['fbComments_displayLocation']);
-		
+
 		$fbComments_settings['fbComments_displayPagesOrPosts'] = $_POST['fbComments_displayPagesOrPosts'];
 		update_option('fbComments_displayPagesOrPosts', $fbComments_settings['fbComments_displayPagesOrPosts']);
-		
+
 		$fbComments_settings['fbComments_publishToWall'] = (isset($_POST['fbComments_publishToWall']) && $_POST['fbComments_publishToWall'] == 'true') ? true : false;
 	    update_option('fbComments_publishToWall', $fbComments_settings['fbComments_publishToWall']);
-		
+
 		$fbComments_settings['fbComments_reverseOrder'] = (isset($_POST['fbComments_reverseOrder']) && $_POST['fbComments_reverseOrder'] == 'true') ? true : false;
 		update_option('fbComments_reverseOrder', $fbComments_settings['fbComments_reverseOrder']);
-		
+
 		$fbComments_settings['fbComments_hideFbLikeButton'] = (isset($_POST['fbComments_hideFbLikeButton']) && $_POST['fbComments_hideFbLikeButton'] == 'true') ? true : false;
 		update_option('fbComments_hideFbLikeButton', $fbComments_settings['fbComments_hideFbLikeButton']);
-		
+
 		$fbComments_settings['fbComments_containerCss'] = esc_html(stripslashes(trim($_POST['fbComments_containerCss'])));
 		update_option('fbComments_containerCss', $fbComments_settings['fbComments_containerCss']);
-		
+
 		$fbComments_settings['fbComments_titleCss'] = esc_html(stripslashes(trim($_POST['fbComments_titleCss'])));
 		update_option('fbComments_titleCss', $fbComments_settings['fbComments_titleCss']);
-		
+
 		$fbComments_settings['fbComments_darkSite'] = (isset($_POST['fbComments_darkSite']) && $_POST['fbComments_darkSite'] == 'true') ? true : false;
 		update_option('fbComments_darkSite', $fbComments_settings['fbComments_darkSite']);
-		
+
 		$fbComments_settings['fbComments_noBox'] = (isset($_POST['fbComments_noBox']) && $_POST['fbComments_noBox'] == 'true') ? true : false;
 		update_option('fbComments_noBox', $fbComments_settings['fbComments_noBox']);
-		
+
 		if (intval($_POST['fbComments_dashNumComments']) > 0) {
 			$fbComments_settings['fbComments_dashNumComments'] = intval($_POST['fbComments_dashNumComments']);
 			update_option('fbComments_dashNumComments', $fbComments_settings['fbComments_dashNumComments']);
 		} else {
 			$fbComments_settings['fbComments_dashNumComments'] = get_option('fbComments_dashNumComments');
 		}
-		
-		
+
+
 		if ($errors == false)
 			echo '<div class="updated"><p><strong>' . __('Options saved.') . '</strong></p></div>';
 		else
@@ -135,7 +135,7 @@
 <div class="wrap">
 	<?php screen_icon(); ?>
 	<h2><?php _e('Facebook Comments for WordPress Options'); ?></h2>
-	
+
 	<?php
 		if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 			echo '<div class="error"><p><strong>' . __('This plugin requires PHP v') . FBCOMMENTS_REQUIRED_PHP_VER . __(' or higher to run (you have PHP v') . phpversion() . __('). Please ask your webhost to install the latest version of PHP on your server.') . '</strong></p></div>';
@@ -147,12 +147,12 @@
 			echo '<br class="gutter" />';
 		}
 	?>
-	
+
 	<form method="post" action="<?php echo str_replace('%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-		
+
 		<div id="poststuff" class="postbox">
 			<h3><?php _e('Core Settings'); ?></h3>
-			
+
 			<div class="inside">
 				<p><?php _e('Application ID (<a href="http://grahamswan.com/facebook-comments/#install">Help</a>): '); ?><input type="text" name="fbComments_appId" value="<?php echo $fbComments_settings['fbComments_appId']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a href="http://www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
 				<p><?php _e('Application Secret (<a href="http://grahamswan.com/facebook-comments/#install">Help</a>): '); ?><input type="text" name="fbComments_appSecret" value="<?php echo $fbComments_settings['fbComments_appSecret']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a href="http://www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
@@ -164,28 +164,28 @@
     			<p><input type="checkbox" id="fbComments_includeOpenGraphMeta" name="fbComments_includeOpenGraphMeta" value="true" <?php if ($fbComments_settings['fbComments_includeOpenGraphMeta']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeOpenGraphMeta"><?php _e(' Include OpenGraph meta information'); ?></label><em><?php _e(" (This will add the following meta information to the page &lt;head&gt; to assist with Like button clicks: post/page title, site name, current URL and content type)"); ?></em></p>
 			</div>
 		</div>
-		
+
 		<div id="poststuff" class="postbox">
 			<h3><?php _e('Application Settings'); ?></h3>
-			
+
 			<div class="inside">
     			<p><input type="checkbox" id="fbComments_includeFbComments" name="fbComments_includeFbComments" value="true" <?php if ($fbComments_settings['fbComments_includeFbComments']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbComments"><?php _e(' Include Facebook comments on blog'); ?></label><em><?php _e(" (Uncheck this if you want to hide the Facebook comments without having to deactivate the plugin)"); ?></em></p>
     			<p><input type="checkbox" id="fbComments_hideWpComments" name="fbComments_hideWpComments" value="true" <?php if ($fbComments_settings['fbComments_hideWpComments']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_hideWpComments"> <?php _e('Hide WordPress comments on posts/pages where Facebook commenting is enabled'); ?></label></p>
     			<p><input type="checkbox" id="fbComments_combineCommentCounts" name="fbComments_combineCommentCounts" value="true" <?php if ($fbComments_settings['fbComments_combineCommentCounts']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_combineCommentCounts"> <?php _e('Combine WordPress and Facebook comment counts'); ?></label></p>
 			</div>
 		</div>
-		
+
 		<div id="poststuff" class="postbox">
 			<h3><?php _e('Notification Settings'); ?></h3>
-			
+
 			<div class="inside">
 				<p><input type="checkbox" id="fbComments_notify" name="fbComments_notify" value="true" <?php if ($fbComments_settings['fbComments_notify']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_notify"><?php _e(' Email me whenever a comment is posted'); ?></label><em><?php _e(" (Email notifications will be sent to the following address: " . get_bloginfo('admin_email') . ". You can change this on the <a href='" .  admin_url('options-general.php') . "'>General Settings</a> page)"); ?></em></p>
 			</div>
 		</div>
-		
+
 		<div id="poststuff" class="postbox">
 			<h3><?php _e('Language Settings'); ?></h3>
-			
+
 			<div class="inside">
 				<p><?php _e('Language for comments: '); ?>
 					<select name="fbComments_language">
@@ -301,10 +301,10 @@
 				</p>
 			</div>
 		</div>
-		
+
 		<div id="poststuff" class="postbox">
 			<h3><?php _e('Comments Box Settings'); ?></h3>
-			
+
 			<div class="inside">
 				<p><?php _e('Facebook Comments Section Title: '); ?><input type="text" name="fbComments_title" value="<?php echo $fbComments_settings['fbComments_title']; ?>" size="30"><em><?php _e(' (This is the title text displayed above the Facebook commenting section)'); ?></em></p>
 				<p><input type="checkbox" id="fbComments_displayTitle" name="fbComments_displayTitle" value="true" <?php if ($fbComments_settings['fbComments_displayTitle']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_displayTitle"><?php _e(' Display the Facebook comments title (set above)'); ?></label></p>
@@ -329,10 +329,10 @@
 				<p><input type="checkbox" id="fbComments_hideFbLikeButton" name="fbComments_hideFbLikeButton" value="true" <?php if ($fbComments_settings['fbComments_hideFbLikeButton']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_hideFbLikeButton"><?php _e(' Hide the Like button and text'); ?></label></p>
 			</div>
 		</div>
-		
+
 		<div id="poststuff" class="postbox">
 			<h3><?php _e('Style Settings'); ?></h3>
-			
+
 			<div class="inside">
 				<p><?php _e('Container Styles: '); ?><input type="text" name="fbComments_containerCss" value="<?php echo $fbComments_settings['fbComments_containerCss']; ?>" size="70"><em><?php _e(' (These styles will be applied to a &lt;div&gt; element wrapping the comments box)'); ?></em></p>
 				<p><?php _e('Title Styles: '); ?><input type="text" name="fbComments_titleCss" value="<?php echo $fbComments_settings['fbComments_titleCss']; ?>" size="70"><em><?php _e(' (These styles will be applied to the title text above the comments box)'); ?></em></p>
@@ -340,25 +340,25 @@
 				<p><input type="checkbox" id="fbComments_noBox" name="fbComments_noBox" value="true" <?php if ($fbComments_settings['fbComments_noBox']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_noBox"><?php _e(' Remove grey box surrounding Facebook comments'); ?></label></p>
 			</div>
 		</div>
-		
+
 		<div id="poststuff" class="postbox">
 			<h3><?php _e('Dashboard Widget Settings'); ?></h3>
-			
+
 			<div class="inside">
 				<p><?php _e('Number of Comments to Display: '); ?><input type="text" name="fbComments_dashNumComments" value="<?php echo $fbComments_settings['fbComments_dashNumComments']; ?>" size="5" maxlength="3"></p>
 			</div>
 		</div>
-		
+
 		<input type="hidden" name="fbComments_update" value="true" />
-		
+
 		<input type="submit" class="button-primary" value="<?php _e('Update Options'); ?>" />
-		
+
 	</form>
-	
+
 	<div id="poststuff" class="postbox gutter">
 		<h3><?php _e('Donate'); ?></h3>
-			
-		<div class="inside contain-floats">		
+
+		<div class="inside contain-floats">
 			<form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="paypal">
 				<input type="hidden" name="cmd" value="_xclick" />
 				<input type="hidden" name="business" value="thinkswan@gmail.com" />
@@ -371,7 +371,7 @@
 				<input type="hidden" name="tax" value="0" />
 				<input type="hidden" name="bn" value="PP-DonationsBF" />
 				<input type="hidden" name="on0" value="Website" />
-				
+
 				<p>Currency:
 				<select id="currency_code" name="currency_code">
 				    <option value="USD">U.S. Dollars</option>
@@ -384,15 +384,15 @@
 
 				<p>Amount:
 				<input type="text" name="amount" size="16" title="The amount you wish to donate" value="10.00" /></p>
-				
+
 				<p><input class="ppimg donateButton" type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" name="submit" style="border:0;" alt="Make a donation" />
 				<span class="donateText">Please consider making a contribution towards future development of this plugin!</span></p>
 			</form>
 		</div>
 	</div>
-	
+
 	<div id="icon-help"></div>
 	<h2><?php _e('If you need help, please refer to the <a href="' . FBCOMMENTS_WEBPAGE . '#faq">official FAQ</a>.'); ?></h2>
-    
+
     <br />
 </div>
