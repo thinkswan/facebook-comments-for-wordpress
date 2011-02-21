@@ -37,7 +37,7 @@
 		$result = $fb->api($query);
 
 		$comments = $result;
-		$ncomms = sizeof($comments[0][fql_result_set]);
+		$ncomms = sizeof($comments[0]['fql_result_set']);
 		$dcomms = $ncomms < $fbComments_settings['fbComments_dashNumComments'] ? $ncomms : $fbComments_settings['fbComments_dashNumComments'];
 
 		if ($ncomms == 0) { echo 'No Comments!'; }
@@ -65,34 +65,34 @@
 				.'<div id="the-comment-list" class="list:comment" style="margin-top: -1em">';
 
 			$parity = '';
-			$users = $comments[1][fql_result_set];
-			$comments = $comments[0][fql_result_set];
+			$users = $comments[1]['fql_result_set'];
+			$comments = $comments[0]['fql_result_set'];
 
 			for ($i=0,$par=0;$i<$ncomms;$i++,$par++) {
 				// for people who use the same app id for more than one site,
 				// only return results unique to this xid
-				if ( strncmp($comments[$i][xid],$fbComments_settings['fbComments_xid'],15) ) { $par--; continue; }
+				if ( strncmp($comments[$i]['xid'],$fbComments_settings['fbComments_xid'],15) ) { $par--; continue; }
 
 				// find matching user
 				for ($j=0;$j<count($users);$j++) {
-					if ($comments[$i][fromid] == $users[$j][id]) {
+					if ($comments[$i]['fromid'] == $users[$j]['id']) {
 						$index=$j;
 						break;
 					}
 				}
 
 				// Comment username and Link
-				$username = $comments[$i][fromid];
+				$username = $comments[$i]['fromid'];
 				if ($username == '1309634065') {	// if anon user
 					$username = '<span class="aname">$comments[$i][username]</span>';
 				} else {
 					$username = '<a target="_blank" href="https://www.facebook.com/profile.php?id='
 						. $username
-						.'">'. $users[$index][name] .'</a>';
+						.'">'. $users[$index]['name'] .'</a>';
 				}
 
 				// make pretty
-				$commenttext = $comments[$i][text];
+				$commenttext = $comments[$i]['text'];
 				$order   = array("\r\n", "\n", "\r");
 				$replace = '<br />';
 
@@ -100,14 +100,14 @@
 				$commenttext = str_replace($order, $replace, $commenttext);
 
 				// url of post/page on which comment was made
-				$commenturl = get_permalink(substr($comments[$i][xid],20));
+				$commenturl = get_permalink(substr($comments[$i]['xid'],20));
 
 				// make pretty alternations
 				$parity = ($par&1)
 					? "comment byuser comment-author-admin odd alt thread-odd thread-alt depth-1 comment-item approved":
 					"comment byuser comment-author-admin even thread-even depth-1 comment-item approved";
 
-				$imgurl = $users[$index][pic_square];
+				$imgurl = $users[$index]['pic_square'];
 
 				// what will be written to the dashboard widget
 				$htmlout .=
@@ -115,9 +115,9 @@
 					'<img alt="" src="'.$imgurl.'" class="avatar avatar-50 photo" height="50" width="50"/>'.
 					'<div class="dashboard-comment-wrap">'.
 						'<h4 class="comment-meta"> From '.
-							'<cite class="comment-author"><a href="https://www.facebook.com/profile.php?id='.$comments[$i][fromid].'">'.$username.'</a></cite> on '.
-							'<a href="'.$commenturl.'&action=edit">'.$commenturl.'</a>
-							<abbr style="font-size:.8em" title="'.date('r',$comments[$i][time]).'"> '.date('d M Y',$comments[$i][time]).'</abbr>
+							'<cite class="comment-author"><a href="https://www.facebook.com/profile.php?id='.$comments[$i]['fromid'].'">'.$username.'</a></cite> on '.
+							'<a href="'.$commenturl.'">'.$commenturl.'</a>
+							<abbr style="font-size:.8em" title="'.date('r',$comments[$i]['time']).'"> '.date('d M Y',$comments[$i]['time']).'</abbr>
 							<span class="approve">[Pending]</span>'.
 						'</h4>
 						<blockquote>
@@ -135,8 +135,8 @@
 							$('#deletecomm".$i."').click(function(data) {
 								FB.api({
 										method: 'comments.remove',"
-										.'comment_id: "'.$comments[$i][id].'", '
-										.'xid: "'.$comments[$i][xid].'", '
+										.'comment_id: "'.$comments[$i]['id'].'", '
+										.'xid: "'.$comments[$i]['xid'].'", '
 										.'access_token: "'.$atoken.'", '
 									."},
 									function(response) {
@@ -220,7 +220,7 @@
 				$number = 5;
 			else if ( $number < 1 )
 				$number = 1;
-			$ncomms = sizeof($comments[0][fql_result_set]);
+			$ncomms = sizeof($comments[0]['fql_result_set']);
 
 			// if no comments, display no comments; otherwise display the greater of $ncomms and $number comments
 			$ncomms  = $ncomms == 0 ? 0 : ($ncomms < $number ? $ncomms : $number);
@@ -228,31 +228,31 @@
 			$output = '<ul id="fbc_rc_widget">';
 
 			$parity = '';
-			$users = $comments[1][fql_result_set];
-			$comments = $comments[0][fql_result_set];
+			$users = $comments[1]['fql_result_set'];
+			$comments = $comments[0]['fql_result_set'];
 
 			$show_avatar = isset($instance['show_avatar']) ? $instance['show_avatar'] : true;
 
 			for ($i=0,$par=0;$i<$ncomms;$i++,$par++) {
-				if ( strncmp($comments[$i][xid],$fbComments_settings['fbComments_xid'],15) ) { $par--; continue; }
+				if ( strncmp($comments[$i]['xid'],$fbComments_settings['fbComments_xid'],15) ) { $par--; continue; }
 				// find matching user
 				for ($j=0;$j<count($users);$j++) {
-					if ($comments[$i][fromid] == $users[$j][id]) {
+					if ($comments[$i]['fromid'] == $users[$j]['id']) {
 						$index=$j;
 						break;
 					}
 				}
 
 				// Comment meta
-				$username = $comments[$i][fromid];
+				$username = $comments[$i]['fromid'];
 				if ($username == '1309634065') {	// if anon user
-					$username = $comments[$i][username];
+					$username = $comments[$i]['username'];
 				} else {
-					$username = '<a target="_blank" href="https://www.facebook.com/profile.php?id='.$username.'">'.$users[$index][name].'</a>';
+					$username = '<a target="_blank" href="https://www.facebook.com/profile.php?id='.$username.'">'.$users[$index]['name'].'</a>';
 				}
 
 				// print user defined number of words, if there are less than this, don't trim
-				$commenttext = trim($comments[$i][text], ' ');
+				$commenttext = trim($comments[$i]['text'], ' ');
 				$nwords = count(explode(" ",$commenttext));
 				$dwords = $nwords <= $instance['word_count'] ? $nwords : $instance['word_count'];
 				if ($nwords > $dwords) {
@@ -266,7 +266,7 @@
 				$commenttext = str_replace($order, $replace, $commenttext);
 
 				// url of post/page on which comment was made
-				$post_id = substr($comments[$i][xid],20);
+				$post_id = substr($comments[$i]['xid'],20);
 				$commenturl = get_permalink($post_id);
 
 				// to allow alternating styles on comments
@@ -274,10 +274,10 @@
 
 				// display avatar only if option is checked
 				if ($show_avatar) {
-					$imgurl = $users[$index][pic_square];
+					$imgurl = $users[$index]['pic_square'];
 					$imgclass = '';
 				} else {
-					$imgurl = $users[$index][pic_square];
+					$imgurl = $users[$index]['pic_square'];
 					$imgclass = 'style="display:none"';
 				}
 
@@ -285,8 +285,8 @@
 				$output .=
 				'<li class="fbc_rc_comment '.$parity.'">
 					<div class="fbc_rc_comment-meta">
-						<cite class="fbc_rc_comment-author"><a href="https://www.facebook.com/profile.php?id='.$comments[$i][fromid].'">'.$username.'</a></cite>
-						<abbr class="fbc_rc_date" title="'.date('r',$comments[$i][time]).'">'.date('d M Y',$comments[$i][time]).'</abbr>
+						<cite class="fbc_rc_comment-author"><a href="https://www.facebook.com/profile.php?id='.$comments[$i]['fromid'].'">'.$username.'</a></cite>
+						<abbr class="fbc_rc_date" title="'.date('r',$comments[$i]['time']).'">'.date('d M Y',$comments[$i]['time']).'</abbr>
 					</div>
 					<img alt="" src="'.$imgurl.'" class="avatar" height="50" width="50" '.$imgclass.' />
 					<div class="fbc_rc_text">'.$commenttext.'</div>
