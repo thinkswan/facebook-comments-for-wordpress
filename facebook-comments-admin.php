@@ -1,4 +1,24 @@
 <?php
+
+	$homeurl = home_url('/');
+	$id_help = <<< END
+<p>Need help? Okay, do you have a facebook app?</p>
+<p><strong>Yes, I do</strong></p>
+<ol>
+<li>Get a list of your applications from here: <a target="_blank" href="http://www.facebook.com/developers/apps.php">Facebook Application List</a></li>
+<li>Select the application you want, then copy and paste the Application ID and Application Secret from there to the boxes below.</li>
+</ol>
+
+<p><strong>No, I haven't created an application yet</strong></p>
+<ol>
+<li>Go here to create it: <a target="_blank" href="//www.facebook.com/developers/createapp.php">Create a facebook app</a></li>
+<li>Good, your app is created. Now, make sure it knows where it's used: On the app's page, click "Edit Settings", then from the left navigation, click "Web Site". 
+	You should now see "Core Settings". Copy <strong>{$homeurl}</strong> and paste it in the "Site URL" box. Now click "Save Changes". Done!</li>
+<li>Get your app id and app secret from here: 
+<a target="_blank" href="http://www.facebook.com/developers/apps.php">Facebook Application List</a></li>
+<li>Select the application you created, then copy and paste the Application ID and Application Secret from there to the boxes below.</li>
+</ol>
+END;
 	if (FBCOMMENTS_ERRORS) {
 		error_reporting(E_ALL); // Ensure all errors and warnings are verbose
 	}
@@ -9,6 +29,12 @@
 		$errors = false;
 
 		$fbComments_settings['fbComments_appId'] = (isset($_POST['fbComments_appId']) && trim($_POST['fbComments_appId']) != '') ? esc_html(stripslashes(trim($_POST['fbComments_appId']))) : null;
+		
+		// $url = "https//www.facebook.com/apps/application.php?".http_build_query(array('id'=>$fbComments_settings['fbComments_appId']));
+		// print_r("url is $url");
+		// $response = fbComments_getUrl($url);
+		// var_dump($response);
+		
 		$response = wp_remote_get("https://www.facebook.com/apps/application.php?".http_build_query(array('id'=>$fbComments_settings['fbComments_appId'])),
 					$args = array('method' => 'GET',
 								'timeout' => '5',
@@ -119,11 +145,15 @@
 			$fbComments_settings['fbComments_dashNumComments'] = get_option('fbComments_dashNumComments');
 		}
 
-
+		
 		if ($errors == false)
 			echo '<div class="updated"><p><strong>' . __('Options saved.') . '</strong></p></div>';
 		else
-			echo '<div class="updated"><p><strong>' . __($errors) . '</strong></p></div>';
+			
+			echo '<div class="error"><p><strong>' . __($errors) . '</strong></p>
+			
+			'.$id_help.'
+			</div>';
 	} else {
 		// Retrieve the settings array
 		global $fbComments_settings;
@@ -139,24 +169,25 @@
 	<?php
 		if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 			echo '<div class="error"><p><strong>' . __('This plugin requires PHP v') . FBCOMMENTS_REQUIRED_PHP_VER . __(' or higher to run (you have PHP v') . phpversion() . __('). Please ask your webhost to install the latest version of PHP on your server.') . '</strong></p></div>';
-		} elseif (!in_array('curl', get_loaded_extensions())) {
-			echo '<div class="error"><p><strong>' . __('This plugin requires the PHP cURL extension to communicate with Facebook. Please ask your webhost to install the cURL extension on your server.') . '</strong></p></div>';
 		} elseif (empty($fbComments_settings['fbComments_appId']) || empty($fbComments_settings['fbComments_appSecret'])) {
-			echo '<div class="error"><p><strong>' . __('The Facebook comments box will not be included in your posts until you set a valid application ID and application secret.') . '</strong></p></div>';
+			echo '<div class="error"><p><strong>' . __('The Facebook comments box will not be included in your posts until you set a valid application ID and application secret.') . '</strong></p>'
+				.$id_help.'</div>';
 		} elseif (isset($_POST['fbComments_update']) && $_POST['fbComments_update'] != 'true') {
 			echo '<br class="gutter" />';
 		}
 	?>
 
 	<form method="post" action="<?php echo str_replace('%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-
+	
+		<p><input type="submit" class="button-primary" value="<?php _e('Update Options'); ?>" /></p>
+		
 		<div id="poststuff" class="postbox">
 			<h3><?php _e('Core Settings'); ?></h3>
 
 			<div class="inside">
-				<p><?php _e('Application ID (<a href="http://grahamswan.com/facebook-comments/#install">Help</a>): '); ?><input type="text" name="fbComments_appId" value="<?php echo $fbComments_settings['fbComments_appId']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a href="http://www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
-				<p><?php _e('Application Secret (<a href="http://grahamswan.com/facebook-comments/#install">Help</a>): '); ?><input type="text" name="fbComments_appSecret" value="<?php echo $fbComments_settings['fbComments_appSecret']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a href="http://www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
-    			<p><?php _e('Comments XID: '); ?><input type="text" name="fbComments_xid" value="<?php echo $fbComments_settings['fbComments_xid']; ?>" size="20"><em><?php _e(" (Only change this if you know what you're doing. Must be a unique string. <a href='" . FBCOMMENTS_WEBPAGE . "#xid'>Learn more</a>)"); ?></em></p>
+				<p><?php _e('Application ID (<a target="_blank" href="//grahamswan.com/facebook-comments/#install">Help</a>): '); ?><input type="text" name="fbComments_appId" value="<?php echo $fbComments_settings['fbComments_appId']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a target="_blank" href="//www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
+				<p><?php _e('Application Secret (<a target="_blank" href="//grahamswan.com/facebook-comments/#install">Help</a>): '); ?><input type="text" name="fbComments_appSecret" value="<?php echo $fbComments_settings['fbComments_appSecret']; ?>" size="20"><em><?php _e(' (This can be retrieved from your <a target="_blank" href="//www.facebook.com/developers/apps.php">Facebook application page</a>)'); ?></em></p>
+    			<p><?php _e('Comments XID: '); ?><input type="text" name="fbComments_xid" value="<?php echo $fbComments_settings['fbComments_xid']; ?>" size="20"><em><?php _e(" (Only change this if you know what you're doing. Must be a unique string. <a target='_blank' href='" . FBCOMMENTS_WEBPAGE . "#xid'>Learn more</a>)"); ?></em></p>
     			<p><input type="checkbox" id="fbComments_includeFbJs" name="fbComments_includeFbJs" value="true" <?php if ($fbComments_settings['fbComments_includeFbJs']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbJs"><?php _e(' Include Facebook JavaScript SDK'); ?></label><em><?php _e(" (This should be checked unless you've manually included the SDK elsewhere)"); ?></em></p>
     			<p class="indent"><input type="checkbox" id="fbComments_includeFbJsOldWay" name="fbComments_includeFbJsOldWay" value="true" <?php if ($fbComments_settings['fbComments_includeFbJsOldWay']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbJsOldWay"><?php _e(' The old way'); ?></label><em><?php _e(" (If the comments no longer load since updating the plugin, check this box to include the JavaScript SDK the old way. Combined comment counts and email notifications will not work with this option enabled)"); ?></em></p>
     			<p><input type="checkbox" id="fbComments_includeFbmlLangAttr" name="fbComments_includeFbmlLangAttr" value="true" <?php if ($fbComments_settings['fbComments_includeFbmlLangAttr']) echo 'checked="checked"'; ?> size="20"><label for="fbComments_includeFbmlLangAttr"><?php _e(' Include Facebook FBML reference'); ?></label><em><?php _e(" (This should be checked unless you have another plugin enabled that includes the FBML reference)"); ?></em></p>
@@ -315,7 +346,7 @@
 						<option value="before"<?php if ($fbComments_settings['fbComments_displayLocation'] == 'before') echo ' selected="selected"'; ?>>Before</option>
 						<option value="after"<?php if ($fbComments_settings['fbComments_displayLocation'] == 'after') echo ' selected="selected"'; ?>>After</option>
 					</select>
-					<em><?php _e(" (<strong>In development; <a href='" . FBCOMMENTS_WEBPAGE . "#comment_placement'>see here</a> for manual instructions</strong>)"); ?></em>
+					<em><?php _e(" (<strong>In development; <a target='_blank' href='" . FBCOMMENTS_WEBPAGE . "#comment_placement'>see here</a> for manual instructions</strong>)"); ?></em>
 				</p>
 				<p><?php _e('Display Facebook comments on pages only, posts only or both? '); ?>
 					<select name="fbComments_displayPagesOrPosts">
