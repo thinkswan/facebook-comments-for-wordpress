@@ -9,20 +9,20 @@
 	 * @since 2.2
 	 */
 	function fbcomments_dashboard_widget_function() {
-		global $fbComments_settings;
+		global $options;
 
-		wp_register_style('fbComments_widgets', FBCOMMENTS_CSS_WIDGETS, array(), FBCOMMENTS_VER);
-		wp_enqueue_style('fbComments_widgets');
-		
+		wp_register_style('widgets', FBCOMMENTS_CSS_WIDGETS, array(), FBCOMMENTS_VER);
+		wp_enqueue_style('widgets');
 
 		// needed for fb api call? excep 104 without it
 		fbComments_storeAccessToken();
-		$atoken =  $fbComments_settings['fbComments_accessToken'];
-
+		
+		$atoken =  $options['accessToken'];
 		$fb = fbComments_getFbApi();
+		
 
 		$commentsq = "SELECT fromid, text, id, time, username, xid, object_id ".
-				  "FROM comment WHERE xid IN (SELECT xid FROM comments_info WHERE app_id={$fbComments_settings['fbComments_appId']})".
+				  "FROM comment WHERE xid IN (SELECT xid FROM comments_info WHERE app_id={$options['appId']})".
 				  "ORDER BY time desc";
 		$usersq = "SELECT id, name, url, pic_square FROM profile ".
 				  "WHERE id IN (SELECT fromid FROM #comments)";
@@ -32,13 +32,12 @@
 					"users": "' . $usersq . '"
 				  }';
 
-
 		$query = array("method"=>"fql.multiquery","queries"=>$query,'access_token'=>$atoken);
 		$result = $fb->api($query);
 
 		$comments = $result;
 		$ncomms = sizeof($comments[0]['fql_result_set']);
-		$dcomms = $ncomms < $fbComments_settings['fbComments_dashNumComments'] ? $ncomms : $fbComments_settings['fbComments_dashNumComments'];
+		$dcomms = $ncomms < $options['dashNumComments'] ? $ncomms : $options['dashNumComments'];
 
 		if ($ncomms == 0) { echo 'No Comments!'; }
 		else {
@@ -51,7 +50,7 @@
 				"<div id=\"fb-root\"></div>
 				<script>
 				  window.fbAsyncInit = function() {
-					FB.init({appId: '{$fbComments_settings['fbComments_appId']}', status: true, cookie: true, xfbml: true});
+					FB.init({appId: '{$options['appId']}', status: true, cookie: true, xfbml: true});
 				  };
 				  (function() {
 					var e = document.createElement('script'); e.async = true;
@@ -71,7 +70,7 @@
 			for ($i=0,$par=0;$i<$ncomms;$i++,$par++) {
 				// for people who use the same app id for more than one site,
 				// only return results unique to this xid
-				if ( strncmp($comments[$i]['xid'],$fbComments_settings['fbComments_xid'],15) ) { $par--; continue; }
+				if ( strncmp($comments[$i]['xid'],$options['xid'],15) ) { $par--; continue; }
 
 				// find matching user
 				for ($j=0;$j<count($users);$j++) {
@@ -160,7 +159,7 @@
 
 	// Create the function used in the action hook
 	function fbcomments_add_dashboard_widgets() {
-		wp_add_dashboard_widget('fbcomments_dashboard_widget', 'Recent Facebook comments', 'fbcomments_dashboard_widget_function');
+		wp_add_dashboard_widget('dashboard_widget', 'Recent Facebook comments', 'fbcomments_dashboard_widget_function');
 	}
 
 
@@ -196,13 +195,13 @@
 			extract( $args );
 			$title = apply_filters('widget_title', $instance['title']);
 
-			global $fbComments_settings;
-			$atoken = $fbComments_settings['fbComments_accessToken'];
+			global $options;
+			$atoken = $options['accessToken'];
 
 			$fb = fbComments_getFbApi();
 
 			$commentsq = "SELECT fromid, text, id, time, username, xid, object_id ".
-					  "FROM comment WHERE xid IN (SELECT xid FROM comments_info WHERE app_id={$fbComments_settings['fbComments_appId']})".
+					  "FROM comment WHERE xid IN (SELECT xid FROM comments_info WHERE app_id={$options['appId']})".
 					  "ORDER BY time desc";
 			$usersq = "SELECT id, name, url, pic_square FROM profile ".
 					  "WHERE id IN (SELECT fromid FROM #comments)";
@@ -234,7 +233,7 @@
 			$show_avatar = isset($instance['show_avatar']) ? $instance['show_avatar'] : true;
 
 			for ($i=0,$par=0;$i<$ncomms;$i++,$par++) {
-				if ( strncmp($comments[$i]['xid'],$fbComments_settings['fbComments_xid'],15) ) { $par--; continue; }
+				if ( strncmp($comments[$i]['xid'],$options['xid'],15) ) { $par--; continue; }
 				// find matching user
 				for ($j=0;$j<count($users);$j++) {
 					if ($comments[$i]['fromid'] == $users[$j]['id']) {

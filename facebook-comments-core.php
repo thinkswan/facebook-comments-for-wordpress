@@ -5,29 +5,27 @@ Common functions
 
 // Update database with default options upon plugin activation
 function fbComments_init() {
-	global $fbComments_defaults, $fbComments_settings;
-
-	foreach($fbComments_defaults as $key => $val) {
-		// Only insert default value if option is not already in the database
-		add_option($key, $val);
-	}
-
-	// If the plugin has been activated before and we already have the integral settings, cache all Facebook comment counds
-	if (!empty($fbComments_settings['fbComments_appId']) &&
-		!empty($fbComments_settings['fbComments_appSecret'])) {
+	global $fbComments_defaults, $options;
+	// delete_option('fbComments');
+	add_option('fbComments', $fbComments_defaults);
+	
+	// If the plugin has been activated before and we already have the integral settings, cache all Facebook comment counts
+	if (!empty($options['appId']) &&
+		!empty($options['appSecret'])) {
+			update_option('fbComments_displayAppIdWarning', false);
 			fbComments_cacheAllCommentCounts();
-	}
+	} else { update_option('fbComments_displayAppIdWarning', true); }
 }
 
 // Email the site owner the current XID upon plugin deactivation
 function fbComments_deactivate() {
-	global $fbComments_settings;
-
+	global $options;
+	
 	$to = get_bloginfo('admin_email');
 	$subject = "[Facebook Comments for WordPress] Your current XID";
 
 	$message = "Thanks for trying out Facebook Comments for WordPress!\n\n" .
-			   "We just thought you'd like to know that your current XID is: {$fbComments_settings['fbComments_xid']}.\n\n" .
+			   "We just thought you'd like to know that your current XID is: {$options['xid']}.\n\n" .
 			   "This should be saved in your website's database, but in case it gets lost, you'll need this unique key to retrieve your comments should you ever choose to activate this plugin again.\n\n" .
 			   "Have a great day!";
 
@@ -49,28 +47,9 @@ function fbComments_deactivate() {
 
 // Remove database entries upon the plugin being uninstalled
 function fbComments_uninit() {
-	global $fbComments_optionKeys;
-
-	foreach($fbComments_optionKeys as $key) {
-		delete_option($key);
-	}
+	delete_option('fbComments');
 }
 
-// Retrieve array of plugin settings
-function fbComments_getSettings() {
-	$settings = array();
-
-	global $fbComments_optionKeys;
-
-	foreach($fbComments_optionKeys as $key) {
-		$settings[$key] = get_option($key);
-	}
-
-	// Retrieve the XID (since it's not in the options array)
-	$settings['fbComments_xid'] = get_option('fbComments_xid');
-
-	return $settings;
-}
 
 // Generate a random alphanumeric string for the comments XID
 function fbComments_getRandXid($length=15) {
@@ -82,6 +61,36 @@ function fbComments_getRandXid($length=15) {
 	}
 
 	return $rand;
+}
+
+// The application ID and application secret must be set before calling this function
+function fbComments_getFbApi() {
+	global $options;
+	
+	$fbApiCredentials = array(
+		'appId'	 => $options['appId'],
+		'secret' => $options['appSecret']
+	);
+
+	return new Facebook($fbApiCredentials);
+}
+
+// The application ID and application secret must be set before calling this function
+function fbComments_storeAccessToken() {
+	fbComments_log('In ' . __FUNCTION__ . '()');
+	global $options;
+
+	if (!$options['accessToken']) {
+		$accessToken = substr(fbComments_getUrl("https://graph.facebook.com/oauth/access_token?type=client_cred&client_id={$options['appId']}&client_secret={$options['appSecret']}"), 13);
+		fbComments_log("    got an access token of [$accessToken]");
+		if ($accessToken != '') {
+			fbComments_log("    Storing an access token of $accessToken");
+			$options['accessToken'] = $accessToken;
+			update_option('fbComments', $options);
+		} else {
+			fbComments_log('    FAILED to obtain an access token');
+		}
+	}
 }
 
 // sugar for calling wp_remote_get
@@ -98,6 +107,7 @@ function fbComments_getUrl($url) {
 								'sslverify'		=> false
 						));
 	$file_contents = $file_contents['body'];
+	
 
 	fbComments_log('In ' . __FUNCTION__ . "(url=$url)");
 

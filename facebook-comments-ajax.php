@@ -13,7 +13,7 @@
 		exit();
 	}
 
-	global $fbComments_settings;
+	global $options;
 
 	// Check if we want to update the comment count or send a notification email
 	switch ($_POST['fn']) {
@@ -37,14 +37,14 @@
     		fbComments_log('In ' . basename(__FILE__) . " with fn={$_POST['fn']}, xid={$_POST['xid']}, " .
 			  			   "postTitle={$_POST['postTitle']}, postUrl={$_POST['postUrl']}, ");
 
-			fbComments_log("    Fetching comments using an access token of {$fbComments_settings['fbComments_accessToken']}");
-			$comments = fbComments_getUrl("https://api.facebook.com/method/comments.get?xid={$_POST['xid']}&access_token={$fbComments_settings['fbComments_accessToken']}&format=json");
+			fbComments_log("    Fetching comments using an access token of {$options['accessToken']}");
+			$comments = fbComments_getUrl("https://api.facebook.com/method/comments.get?xid={$_POST['xid']}&access_token={$options['accessToken']}&format=json");
 			$commentsJson = json_decode($comments);
 			$userId = $commentsJson[0]->fromid;
 			$comment = $commentsJson[0]->text;
 
-			fbComments_log("    Fetching user info using an access token of {$fbComments_settings['fbComments_accessToken']}");
-			$user = fbComments_getUrl("https://api.facebook.com/method/users.getInfo?uids=$userId&fields=name&access_token={$fbComments_settings['fbComments_accessToken']}&format=json");
+			fbComments_log("    Fetching user info using an access token of {$options['accessToken']}");
+			$user = fbComments_getUrl("https://api.facebook.com/method/users.getInfo?uids=$userId&fields=name&access_token={$options['accessToken']}&format=json");
 			$userJson = json_decode($user);
 			$username = $userJson[0]->name;
 			fbComments_log("    For latest comment, poster UID=$userId, poster name=$username, comment=$comment");
