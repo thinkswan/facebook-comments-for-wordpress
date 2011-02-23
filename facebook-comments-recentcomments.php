@@ -99,7 +99,8 @@
 				$commenttext = str_replace($order, $replace, $commenttext);
 
 				// url of post/page on which comment was made
-				$commenturl = get_permalink(substr($comments[$i]['xid'],20));
+				$post_id = substr($comments[$i]['xid'],20);
+				$commenturl = get_permalink($post_id);
 
 				// make pretty alternations
 				$parity = ($par&1)
