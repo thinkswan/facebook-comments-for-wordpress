@@ -70,9 +70,9 @@
 		'noBox'						=> false,
 		'dashNumComments'			=> 10
 	);
-	
 
-	
+
+
 	/**********************************
 	 Activation hooks/actions
 	 **********************************/
@@ -80,10 +80,8 @@
 	register_activation_hook(__FILE__, 'fbComments_init');
 	register_deactivation_hook(__FILE__, 'fbComments_deactivate');
 	register_uninstall_hook(__FILE__, 'fbComments_uninit');
-	
-	// delete_option('fbComments');
-	// update_option('fbComments', $fbComments_defaults);
-	global $options;
+
+	global $options;  // main options array in wp database options table
 	$options = get_option('fbComments');
 
 	// Display a message prompting the user to enter a Facebook application ID and secret upon plugin activation (if they aren't already set)
@@ -142,41 +140,42 @@
 		add_action('wp_head', 'fbComments_addOpenGraphMeta');
 	}
 
-	
-	
+
+
 	/**********************************
 	 Settings page
 	 **********************************/
-		
+
 	add_action('admin_init', 'fbComments_adminPage_init' );
 	add_action('admin_menu', 'fbComments_adminPage');
 
 	// Init plugin options to white list our options
 	function fbComments_adminPage_init() {
-		register_setting( 'fbComments_options', 'fbComments' );
+		register_setting('fbComments_options', 'fbComments', 'fbComments_sanatize');
 	}
-	
+
 	// Add settings page
 	function fbComments_adminPage() {
 		add_options_page(__('Facebook Comments for WordPress Options'), __('Facebook Comments'), 'manage_options', 'facebook-comments', 'fbComments_includeAdminPage');
 	}
-	
+
 	// Draw the settings page
 	function fbComments_includeAdminPage() {
 		include('facebook-comments-admin.php');
 	}
 
 	// Sanitize and validate input. Accepts an array, return a sanitized array.
-	function ozh_sampleoptions_validate($input) {
-		// Our first value is either 0 or 1
-		$input['option1'] = ( $input['option1'] == 1 ? 1 : 0 );
-		
-		// Say our second option must be safe text with no HTML tags
-		$input['sometext'] =  wp_filter_nohtml_kses($input['sometext']);
-		
+	function fbComments_sanatize($input) {
+		$input['title'] = esc_attr($input['title']);
+		$input['containerCss'] = esc_attr($input['containerCss']);
+		$input['titleCss'] = esc_attr($input['titleCss']);
+		$input['dashNumComments'] = absint($input['dashNumComments']);
+		$input['numPosts'] = absint($input['numPosts']);
+		$input['width'] = absint($input['width']);
+
 		return $input;
 	}
-		 
+
 
 	// add "Settings" link to plugin on plugins page
 	add_filter('plugin_action_links', 'fbComments_settingsLink', 0, 2);
@@ -190,7 +189,7 @@
 
 		return $actionLinks;
 	}
-	
+
 
 	// make sure both are set to avoid fatal error upon getting fbapi
 	if (empty($options['appId']) || empty($options['appSecret'])) {
@@ -199,13 +198,13 @@
 		// hook for admin dashboard widget
 		add_action('init', 'fbcomments_dashboard_widget_init'); // load jquery
 		add_action('wp_dashboard_setup', 'fbcomments_add_dashboard_widgets');
-	
+
 		// register FBCRC_Widget widget
 		add_filter('the_posts', 'conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
 		add_action('widgets_init', create_function('', 'return register_widget("FBCRC_Widget");'));
 	}
-	
-	
+
+
 	/**********************************
 	 Program entry point
 	 **********************************/
@@ -214,7 +213,7 @@
 	if ($options['includeFbComments']) {
 		add_filter('comments_array', 'facebook_comments');
 	}
-	
+
 	// Combine the Facebook and WordPress comment counts if desired
 	if ($options['combineCommentCounts'] &&
 		!empty($options['appId']) &&
