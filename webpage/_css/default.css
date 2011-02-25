@@ -235,9 +235,9 @@ form#paypal select {
 }
 /* We must override the currency dropdown menu in Firefox because it renders several times larger than it does in other browsers */
 @-moz-document url-prefix() {
-  form#paypal select {
-    font-size: 14px;
-  }
+    form#paypal select {
+        font-size: 14px;
+    }
 }
 .donateButton {
     float: left;

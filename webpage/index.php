@@ -381,7 +381,9 @@
             
             <span class="instruction indent">I am no longer actively supporting this plugin, so please do not contact me with bugs or feature requests any longer. If you discover a bug, you can add it to the <strong><a href="https://github.com/thinkswan/Facebook-Comments-for-WordPress/issues">GitHub Issues</a></strong> page.<br /><br />
             
-            You can always find help by posting in the <strong><a href="#demo">Live Demo</a></strong> below or by leaving a message in the <strong><a href="http://wordpress.org/tags/facebook-comments-for-wordpress?forum_id=10">WordPress forums</a></strong>.</span>
+            You can always find help by posting in the <strong><a href="#demo">Live Demo</a></strong> below or by leaving a message in the <strong><a href="http://wordpress.org/tags/facebook-comments-for-wordpress?forum_id=10">WordPress forums</a></strong>.</span><br /><br />
+            
+            If you need to get in touch with me, you can always find me on <strong><a href="http://twitter.com/thinkswan">Twitter</a></strong>, <strong><a href="http://facebook.com/thinkswan">Facebook</a></strong> and <strong><a href="http://linkedin.com/in/thinkswan">LinkedIn</a></strong>.
             
             <!-- Donate -->
             <br class="clear" />
