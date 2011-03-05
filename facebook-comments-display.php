@@ -136,12 +136,10 @@
 
 		echo "
 <script type='text/javascript'>
-	j = jQuery.noConflict();
-
 	var addedComment = function(response) {
 		//console.log('fbComments: Caught added comment');
 		//console.log('fbComments:     Making AJAX call to update Facebook comment count');
-		j.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'addComment', xid: '$xid' }, function(resp) {
+		$.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'addComment', xid: '$xid' }, function(resp) {
 			if (resp === 'true') {
 				//console.log('fbComments:     Updated and cached Facebook comment count for post with xid=$xid');
 			} else {
@@ -152,7 +150,7 @@
 		if ($options['notify']) {
 			echo "
 		//console.log('fbComments:     Making AJAX call to send email notification');
-		j.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'sendNotification', xid: '$xid', postTitle: '$postTitle', postUrl: '$postUrl' }, function(resp) {
+		$.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'sendNotification', xid: '$xid', postTitle: '$postTitle', postUrl: '$postUrl' }, function(resp) {
 			if (resp === 'true') {
 				//console.log('fbComments:     Sent email notification');
 			} else {
