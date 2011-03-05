@@ -16,10 +16,10 @@
 
 		// needed for fb api call? excep 104 without it
 		fbComments_storeAccessToken();
-		
+
 		$atoken =  $options['accessToken'];
 		$fb = fbComments_getFbApi();
-		
+
 
 		$commentsq = "SELECT fromid, text, id, time, username, xid, object_id ".
 				  "FROM comment WHERE xid IN (SELECT xid FROM comments_info WHERE app_id={$options['appId']})".
@@ -99,7 +99,8 @@
 				$commenttext = str_replace($order, $replace, $commenttext);
 
 				// url of post/page on which comment was made
-				$commenturl = get_permalink(substr($comments[$i]['xid'],20));
+				$post_id = substr($comments[$i]['xid'],20);
+				$commenturl = get_permalink($post_id);
 
 				// make pretty alternations
 				$parity = ($par&1)
@@ -115,7 +116,7 @@
 					'<div class="dashboard-comment-wrap">'.
 						'<h4 class="comment-meta"> From '.
 							'<cite class="comment-author"><a href="https://www.facebook.com/profile.php?id='.$comments[$i]['fromid'].'">'.$username.'</a></cite> on '.
-							'<a href="'.$commenturl.'">'.$commenturl.'</a>
+							'<a href="'.$commenturl.'">'.get_post($post_id)->post_title.'</a>
 							<abbr style="font-size:.8em" title="'.date('r',$comments[$i]['time']).'"> '.date('d M Y',$comments[$i]['time']).'</abbr>
 							<span class="approve">[Pending]</span>'.
 						'</h4>
