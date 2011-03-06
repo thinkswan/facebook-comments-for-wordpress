@@ -1,18 +1,18 @@
 === Facebook Comments for WordPress ===
-Contributors: thinkswan, AlmogBaku, sboddez
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=7QKHFXCNDTA5U&lc=CA&item_name=Graham%20Swan%20%28Facebook%20Comments%20for%20WordPress%20plugin%29&item_number=thinkswan&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
+Contributors: thinkswan, AlmogBaku, sboddez, we8u, .shaun
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=fbc%40we8u%2ecom&lc=US&item_name=Facebook%20Comments%20for%20WordPress&item_number=shaund&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: comments, facebook, social graph, posts, pages, discussion, facebook comments
 Requires at least: 2.9.2
-Tested up to: 3.0.5
-Stable tag: 2.1.2
+Tested up to: 3.1
+Stable tag: 3.0.0
 
-Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, etc.
+Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, recent comments widget, etc.
 
 == Description ==
 
 This plugin integrates the Facebook commenting system right into your website. If a reader is logged into Facebook while
 viewing any comment-enabled page or post, they'll be able to leave a comment using their Facebook profile. Non-Facebook
-users can post anonymously with a valid email address.
+users can post anonymously with a valid email address (v1), or via other services (v2).
 
 Features:
 
@@ -20,12 +20,12 @@ Features:
 * Number of comments displayed can be adjusted
 * Option to post comments directly to a user's Facebook profile page
 * Comments can be included on pages only, posts only or both
-* Comments can be shown in chronological order or with the most recent comments first
+* Comments can be shown in chronological order or with the most recent comments first (if using old facebook comments system)
 * Facebook comments can be attached to WordPress comments or inserted manually anywhere in your theme
 * WordPress comments can be hidden on pages/posts where Facebook comments are enabled
 * Comment counts on pages/posts reflect both the Facebook and WordPress comments
 * Email notifications can be sent whenever a comment is posted
-* Like button can be hidden if required
+* facebook notifications can also be sent whenever a comment is posted
 
 == Installation ==
 
@@ -34,15 +34,24 @@ Features:
 3. Setup the plugin options by using the `Facebook Comments` page (located under the `Settings` menu)
 
 * Note that a `Facebook application ID` is required. For details on how to get one, including a screenshot walkthrough,
-  check out http://grahamswan.com/facebook-comments/#install
+  check out http://we8u.com/facebook-comments/#install
 * In order to keep your comments through upgrades, you **must** set a unique `XID`. This `XID` will be maintained when you
   upgrade the plugin
 
 == Frequently Asked Questions ==
 
-If you need help, please refer to the official FAQ at http://grahamswan.com/facebook-comments/#faq.
+If you need help, please refer to the official FAQ at http://we8u.com/facebook-comments/#faq.
 
 == Changelog ==
+
+= 3.0.0 =
+* Upgraded to use the latest method of getting facebook comments, which means, THREADED COMMENTS! Yay!
+* Option: Ability to display recent facebook comments as a widget
+* Option: Ability to moderate facebook comments from dashboard
+* Both of which can be styled via the stylesheet located in wp-content/plugins/facebook-comments-for-wordpress/css/facebook-comments-widgets.css
+* Bugfix: Changed jQuery call to fix some conflicts users were having with other jQuery-using plugins (such as the fb like plugin)
+* Removed dependency on cURL. Now uses wp_remote_get. (note: facebook.php still uses cURL)
+* For a complete overview of changes, see http://we8u.com/fbc3
 
 = 2.1.2 =
 * Option: Ability to uncheck the **Post comment to my Facebook profile** box by default
@@ -130,6 +139,9 @@ If you need help, please refer to the official FAQ at http://grahamswan.com/face
 
 == Upgrade Notice ==
 
+= 3.0.0 =
+This update adds a few bug fixes and enhancements, as well as the option to use facebook's new comment system, which enables threading and many other features. Also included in this update are recent comment widgets and the ability to moderate comments on the Dashboard. Note, facebook's new v2 comments are somewhat buggy, see: http://we8u.com/fbc3
+
 = 2.1.2 =
 This update adds an option to uncheck the Post comment to my Facebook profile box by default, as well as changing the pre-activation checks to notices to fix the activation issues some people were having. (If you receive a Parse error when activating, please ensure you're running PHP v5.0.0 or higher on your server.)
 
@@ -176,11 +188,11 @@ activated/deactivated. Also provides new options.
 
 == Known Issues ==
 
-For a short list of known issues, please refer to the official website at http://grahamswan.com/facebook-comments/#issues.
+For a short list of known issues, please refer to the official website at http://we8u.com/facebook-comments/#issues.
 
 == Upcoming Features ==
 
-For a list of upcoming features, please refer to the official website at http://grahamswan.com/facebook-comments/#upcoming.
+For a list of upcoming features, please refer to the official website at http://we8u.com/facebook-comments/#upcoming.
 
 == Screenshots ==
 
@@ -188,3 +200,6 @@ For a list of upcoming features, please refer to the official website at http://
 2. Anonymous posting for users without a Facebook account.
 3. Using a custom stylesheet.
 4. The plugin settings page.
+5. Recent Comments widget
+6. Recent Comments widget settings
+7. Dashboard recent comments
