@@ -168,10 +168,53 @@
 
 	function fbComments_printFbCommentsTag($xid, $postTitle, $postUrl, $customStylesheet) {
 		global $options;
-
 		// Since the 'publish_feed' option defaults to true, we need to pass it an explicit false if it's turned off
 		$publishToWall = ($options['publishToWall']) ? 'true' : 'false';
-
-		echo "\t<fb:comments xid='$xid' numposts='{$options['numPosts']}' width='{$options['width']}' simple='{$options['noBox']}' publish_feed='$publishToWall' reverse='{$options['reverseOrder']}' css='$customStylesheet' title='$postTitle' url='$postUrl' notify='true'></fb:comments>
-</div>\n";
+		// if ($options['newUser'] == 1) {
+			// echo "\t<fb:comments href='$postUrl' ",
+				// "numposts='{$options['numPosts']}' ",
+				// "width='{$options['width']}' ",
+				// "publish_feed='$publishToWall' ",
+				// "</fb:comments>";
+		// }
+		if ($options['v1plusv2'] == 1) {
+			$options['hideFbLikeButton'] = true;
+			update_option('fbComments', $options);
+			echo "\t<fb:comments xid='$xid' href='$postUrl' ",
+				"numposts='{$options['numPosts']}' ",
+				"width='{$options['width']}' ",
+				"publish_feed='$publishToWall' ",
+				"migrated='1'></fb:comments>";
+				
+			echo "\t<fb:comments xid='$xid' ",
+				"numposts='{$options['numPosts']}' ",
+				"width='{$options['width']}' ",
+				"simple='{$options['noBox']}' ",
+				"publish_feed='$publishToWall' ",
+				"reverse='{$options['reverseOrder']}' ",
+				"css='$customStylesheet' ",
+				"title='$postTitle' ",
+				"url='$postUrl' ",
+				"notify='true'></fb:comments>";
+		} else if ($options['newFBC'] == 1) {
+			// $xid = urlencode($xid);
+			echo "\t<fb:comments xid='$xid' ",
+				"numposts='{$options['numPosts']}' ",
+				"width='{$options['width']}' ",
+				"publish_feed='$publishToWall' ",
+				"migrated='1'></fb:comments>";
+		
+		} else {
+			echo "\t<fb:comments xid='$xid' ",
+				"numposts='{$options['numPosts']}' ",
+				"width='{$options['width']}' ",
+				"simple='{$options['noBox']}' ",
+				"publish_feed='$publishToWall' ",
+				"reverse='{$options['reverseOrder']}' ",
+				"css='$customStylesheet' ",
+				"title='$postTitle' ",
+				"url='$postUrl' ",
+				"notify='true'></fb:comments>";
+		}
+echo "</div>\n";
 	}

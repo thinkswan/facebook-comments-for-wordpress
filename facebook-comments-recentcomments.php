@@ -6,7 +6,7 @@
 	 /**
 	 * Display recent comments from facebook in a dashboard widget.
 	 *
-	 * @since 2.2
+	 * @since 3.0.0
 	 */
 	function fbcomments_dashboard_widget_function() {
 		global $options;
@@ -39,9 +39,11 @@
 		$ncomms = sizeof($comments[0]['fql_result_set']);
 		$dcomms = $ncomms < $options['dashNumComments'] ? $ncomms : $options['dashNumComments'];
 
-		if ($ncomms == 0) { echo 'No Comments!'; }
-		else {
-			$ncomms  = $ncomms < 10 ? $ncomms : 10;
+		if ($ncomms == 0) { echo "<div style='text-align:right; font-size:.8em'>
+					<a href='https://developers.facebook.com/tools/comments?id={$options['appId']}'>Administer Comments</a></div><hr />"
+					.'No Comments!';
+		} else {
+			// $ncomms  = $ncomms < 10 ? $ncomms : 10;
 
 			$htmlout =
 				// using the old api to make calling from js easier
@@ -59,15 +61,15 @@
 					document.getElementById('fb-root').appendChild(e);
 				  }());
 				</script>"
-
+				."<div style='text-align:right; font-size:.8em'>
+					<a href='https://developers.facebook.com/tools/comments?id={$options['appId']}'>Administer Comments</a></div><hr />"
 				// should probably change this to class so that it validates
 				.'<div id="the-comment-list" class="list:comment" style="margin-top: -1em">';
 
 			$parity = '';
 			$users = $comments[1]['fql_result_set'];
 			$comments = $comments[0]['fql_result_set'];
-
-			for ($i=0,$par=0;$i<$ncomms;$i++,$par++) {
+			for ($i=0,$par=0;$i<$dcomms;$i++,$par++) {
 				// for people who use the same app id for more than one site,
 				// only return results unique to this xid
 				if ( strncmp($comments[$i]['xid'],$options['xid'],15) ) { $par--; continue; }
@@ -182,7 +184,7 @@
 	/**
 	 * Recent_Comments widget class
 	 *
-	 * @since 2.2
+	 * @since 3.0.0
 	 */
 	class FBCRC_Widget extends WP_Widget {
 		/** constructor */
@@ -200,10 +202,25 @@
 			$atoken = $options['accessToken'];
 
 			$fb = fbComments_getFbApi();
-
+			/*
+			select post_id, fromid, time, text, post_fbid 
+			from comment 
+			where object_id 
+			in (select comments_fbid from link_stat where url="http://developers.facebook.com/blog/post/472")'
+			*/
 			$commentsq = "SELECT fromid, text, id, time, username, xid, object_id ".
 					  "FROM comment WHERE xid IN (SELECT xid FROM comments_info WHERE app_id={$options['appId']})".
 					  "ORDER BY time desc";
+			// $commurl = urlencode('');
+			// $commentsq = "SELECT fromid, text, id, time, username, xid, post_id, post_fbid, object_id ".
+						 // "FROM comment ".
+						 // "WHERE (xid IN (SELECT xid FROM comments_info WHERE app_id={$options['appId']})) ".
+						 // "OR object_id IN (SELECT comments_fbid FROM link_stat WHERE url='$commurl') ".
+						 // "ORDER BY time desc";
+			
+			// $commentsq = "SELECT post_id, fromid, time, text, post_fbid ".
+					  // 'FROM comment'.
+					  // "ORDER BY time desc";
 			$usersq = "SELECT id, name, url, pic_square FROM profile ".
 					  "WHERE id IN (SELECT fromid FROM #comments)";
 
@@ -214,6 +231,7 @@
 
 
 			$query = array("method"=>"fql.multiquery","queries"=>$query,'access_token'=>$atoken);
+			
 			$comments = $fb->api($query);
 
 			if ( ! $number = (int) $instance['number'] )
@@ -224,13 +242,12 @@
 
 			// if no comments, display no comments; otherwise display the greater of $ncomms and $number comments
 			$ncomms  = $ncomms == 0 ? 0 : ($ncomms < $number ? $ncomms : $number);
-
 			$output = '<ul id="fbc_rc_widget">';
 
 			$parity = '';
 			$users = $comments[1]['fql_result_set'];
 			$comments = $comments[0]['fql_result_set'];
-
+			
 			$show_avatar = isset($instance['show_avatar']) ? $instance['show_avatar'] : true;
 
 			for ($i=0,$par=0;$i<$ncomms;$i++,$par++) {
@@ -242,6 +259,7 @@
 						break;
 					}
 				}
+				
 
 				// Comment meta
 				$username = $comments[$i]['fromid'];

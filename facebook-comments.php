@@ -1,18 +1,18 @@
 <?php
 	/*
 	Plugin Name: Facebook Comments for WordPress
-	Plugin URI: http://www.grahamswan.com/facebook-comments
+	Plugin URI: http://we8u.com/facebook-comments
 	Description: Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, etc.
-	Author: Graham Swan
-	Version: 2.1.2
-	Author URI: http://www.grahamswan.com/
+	Author: we8u
+	Version: 3.0
+	Author URI: http://we8u.com/
 	*/
 
 	define('FBCOMMENTS_ERRORS', false); // Set to true while developing, false for a release
-	define('FBCOMMENTS_VER', '2.2');
+	define('FBCOMMENTS_VER', '3.0.0');
 	define('FBCOMMENTS_REQUIRED_PHP_VER', '5.0.0');
-	define('FBCOMMENTS_AUTHOR', 'Graham Swan');
-	define('FBCOMMENTS_WEBPAGE', 'http://grahamswan.com/facebook-comments/');
+	define('FBCOMMENTS_AUTHOR', 'we8u');
+	define('FBCOMMENTS_WEBPAGE', 'http://we8u.com/facebook-comments/');
 	define('FBCOMMENTS_PATH', plugins_url('facebook-comments-for-wordpress/'));
 	define('FBCOMMENTS_CSS_ADMIN', FBCOMMENTS_PATH . 'css/facebook-comments.css');
 	define('FBCOMMENTS_CSS_HIDEWPCOMMENTS', FBCOMMENTS_PATH . 'css/facebook-comments-hidewpcomments.css');
@@ -68,7 +68,11 @@
 		'titleCss'					=> 'margin-bottom: 15px; font-size: 140%; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 5px;',
 		'darkSite'					=> '',
 		'noBox'						=> false,
-		'dashNumComments'			=> 10
+		'dashNumComments'			=> 10,
+		'newFBC'					=> false,
+		'v1plusv2'					=> false,
+		// 'newUser'					=> false,
+		'notifyUserList'			=> '',
 	);
 
 
@@ -123,18 +127,19 @@
 	if ($options['includeOpenGraphMeta']) {
 		function fbComments_addOpenGraphMeta() {
 			global $wp_query;
+			global $options;
 
 			$postId = $wp_query->post->ID;
 		    $postTitle = single_post_title('', false);
 		    $postUrl = get_permalink($postId);
 		    $siteName = get_bloginfo('name');
-		    $appId = get_option('appId');
-
+		    $appId = $options['appId'];
+			if (strlen($options['notifyUserList']) > 0) { echo "<meta property='fb:admins' content='{$options['notifyUserList']}'>"; }
 			echo "<meta property='og:title' content='$postTitle' />
 <meta property='og:site_name' content='$siteName' />
 <meta property='og:url' content='$postUrl' />
 <meta property='og:type' content='article' />
-<meta property='fb:app_id' content='$appId' />\n";
+<meta property='fb:app_id' content='$appId'>\n";
 		}
 
 		add_action('wp_head', 'fbComments_addOpenGraphMeta');
