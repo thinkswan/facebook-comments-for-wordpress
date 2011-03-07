@@ -74,8 +74,7 @@
 		// 'newUser'					=> false,
 		'notifyUserList'			=> '',
 	);
-
-
+	
 
 	/**********************************
 	 Activation hooks/actions
@@ -213,7 +212,7 @@
 	/**********************************
 	 Program entry point
 	 **********************************/
-
+	 
 	// Ensure we're able to display the comment box
 	if ($options['includeFbComments']) {
 		add_filter('comments_array', 'facebook_comments');

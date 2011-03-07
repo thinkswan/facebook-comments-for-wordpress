@@ -1,10 +1,10 @@
 === Facebook Comments for WordPress ===
 Contributors: thinkswan, AlmogBaku, sboddez, we8u, .shaun
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=fbc%40we8u%2ecom&lc=US&item_name=Facebook%20Comments%20for%20WordPress&item_number=shaund&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
-Tags: comments, facebook, social graph, posts, pages, discussion, facebook comments
+Tags: facebook comments, comments, facebook, social graph, posts, pages, discussion, community
 Requires at least: 2.9.2
 Tested up to: 3.1
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 
 Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, recent comments widget, etc.
 
@@ -43,6 +43,9 @@ Features:
 If you need help, please refer to the official FAQ at http://we8u.com/facebook-comments/#faq.
 
 == Changelog ==
+
+= 3.0.1 =
+* Fixed a mistake where old app ID and secret and xid weren't being copied from previous installations.
 
 = 3.0.0 =
 * Upgraded to use the latest method of getting facebook comments, which means, THREADED COMMENTS! Yay!
@@ -138,6 +141,9 @@ If you need help, please refer to the official FAQ at http://we8u.com/facebook-c
 * Initial release
 
 == Upgrade Notice ==
+
+= 3.0.1 =
+* This update will bring back your xid.
 
 = 3.0.0 =
 This update adds a few bug fixes and enhancements, as well as the option to use facebook's new comment system, which enables threading and many other features. Also included in this update are recent comment widgets and the ability to moderate comments on the Dashboard. Note, facebook's new v2 comments are somewhat buggy, see: http://we8u.com/fbc3

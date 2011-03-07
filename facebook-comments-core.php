@@ -6,8 +6,26 @@ Common functions
 // Update database with default options upon plugin activation
 function fbComments_init() {
 	global $fbComments_defaults, $options;
-	// delete_option('fbComments');
-	add_option('fbComments', $fbComments_defaults);
+	
+	$options = get_option('fbComments');
+	add_option('fbComments', $fbComments_defaults); //copy defaults to db
+	$save_appId = $options['appId'];			// save id, secret, xid incase upgrading 
+	$save_appSecret = $options['appSecret'];
+	$save_xid = $options['xid'];
+	$options = $fbComments_defaults;			// copy defaults
+
+	$_appId = get_option('fbComments_appId');
+	$_appSecret = get_option('fbComments_appSecret');
+	if (strlen($_appId) > 1) $options['appId'] = $_appId; 
+	else 					 $options['appId'] = $save_appId;
+	
+	if (strlen($_appSecret) > 1) $options['appSecret'] = $_appSecret;
+	else 						 $options['appSecret'] = $save_appSecret;
+	
+	$options['xid'] = get_option('fbComments_xid');	// see if upgrading from v < 3
+	if (strlen($options['xid']) < 1) { $options['xid'] = $save_xid; }
+		
+	update_option('fbComments', $options);	
 	
 	// If the plugin has been activated before and we already have the integral settings, cache all Facebook comment counts
 	if (!empty($options['appId']) &&
