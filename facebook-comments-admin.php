@@ -42,7 +42,7 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 	<tbody><tr>
 	<td style="width:33%"> <input type="submit" class="button-primary" value="<?php _e('Update Options'); ?>" /></div> </td>
 	<td style="width:33%"> <div id="icon-help"></div>
-		<h6><?php _e('If you need help, please refer to the <a href="' . FBCOMMENTS_WEBPAGE . '#faq">official FAQ</a>'); ?>
+		<h6><?php _e('If you need help, please refer to the <a href="http://bit.ly/i3lThG">official FAQ</a>'); ?>
 		</h6>
 		
 	</td>
@@ -88,7 +88,7 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 			<p><input type="checkbox" id="fbComments_newFBC" name="fbComments[newFBC]" value="1" <?php checked($options['newFBC'], 1 ); ?> size="20">
 				<label for="fbComments_newFBC"> <?php _e('Enable the just-released version of facebook\'s '.
 						'comment plugin. This is quite new, and some people are having problems. '. 
-						'See discussion <a href="//developers.facebook.com/blog/post/472">here</a>'); ?>
+						'See discussion <a href="http://bit.ly/fuoDaM">here</a>'); ?>
 				</label>
 			</p>
 			<p><input type="checkbox" id="fbComments_v1plusv2" name="fbComments[v1plusv2]" value="1" <?php checked($options['v1plusv2'], 1 ); ?>>
@@ -125,6 +125,12 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 
 			<p><input type="checkbox" id="fbComments_combineCommentCounts" name="fbComments[combineCommentCounts]" value="1" <?php checked($options['combineCommentCounts'], 1 ); ?> size="20">
 				<label for="fbComments_combineCommentCounts"> <?php _e('Combine WordPress and Facebook comment counts'); ?></label></p>
+			
+			<p><input type="checkbox" id="fbComments_showDBWidget" name="fbComments[showDBWidget]" value="1" <?php checked($options['showDBWidget'], 1 ); ?>>
+				<label for="fbComments_newUser"> <?php _e('Show the Dashboard Recent Comments admin widget'); ?>
+				</label>
+			</p>			
+			
 			<p><a href="https://developers.facebook.com/tools/comments/?id=<?php echo $options['appId']; ?>">
 			<img class="img" src="https://s-static.ak.facebook.com/rsrc.php/v1/yh/r/sFEt4HFKXwP.gif" style="top: -1px;" width="15" height="16" />
 			Moderation Settings</a> <!--<em><strong>(inline editing of these settings is in development)</strong></em> --></p>

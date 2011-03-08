@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=fbc%4
 Tags: facebook comments, comments, facebook, social graph, posts, pages, discussion, community
 Requires at least: 2.9.2
 Tested up to: 3.1
-Stable tag: 3.0.1
+Stable tag: 3.0.2
 
 Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, recent comments widget, etc.
 
@@ -29,7 +29,7 @@ Features:
 
 == Installation ==
 
-1. Unzip `facebook-comments-for-wordpress.2.1.2.zip` to your `/wp-content/plugins/` directory
+1. Unzip `facebook-comments-for-wordpress.3.0.2.zip` to your `/wp-content/plugins/` directory
 2. Activate the plugin through the `Plugins` menu in WordPress (depending on the number of posts on your site, activation may take a moment because the plugin is caching all of your comment counts)
 3. Setup the plugin options by using the `Facebook Comments` page (located under the `Settings` menu)
 
@@ -44,8 +44,14 @@ If you need help, please refer to the official FAQ at http://we8u.com/facebook-c
 
 == Changelog ==
 
+= 3.0.2 =
+* Updated to handle the way WP3.1 updates plugins. see: http://bit.ly/wp3_1noupdate
+* Tested upto WordPress 3.2-bleeding
+
 = 3.0.1 =
-* Fixed a mistake where old app ID and secret and xid weren't being copied from previous installations.
+* Fixed a mistake where settings (including old app ID, secret and xid) weren't being copied from previous installations.
+* Added setting to hide Dashboard Recent Comments admin widget.
+* See a demo of facebook's new comment system here: http://bit.ly/fknVz8
 
 = 3.0.0 =
 * Upgraded to use the latest method of getting facebook comments, which means, THREADED COMMENTS! Yay!
@@ -142,8 +148,11 @@ If you need help, please refer to the official FAQ at http://we8u.com/facebook-c
 
 == Upgrade Notice ==
 
+= 3.0.2 =
+* This update does the same thing as deactivating then reactivating 3.0.1. The reason for this update is that WP3.1 changed the way plugins update. see: http://bit.ly/wp3_1noupdate
+
 = 3.0.1 =
-* This update will bring back your xid.
+* This update will bring back your xid and fix any other problems you may have had with settings when upgrading to 3.0.0. Sorry for the trouble.
 
 = 3.0.0 =
 This update adds a few bug fixes and enhancements, as well as the option to use facebook's new comment system, which enables threading and many other features. Also included in this update are recent comment widgets and the ability to moderate comments on the Dashboard. Note, facebook's new v2 comments are somewhat buggy, see: http://we8u.com/fbc3

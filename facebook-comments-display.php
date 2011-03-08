@@ -9,6 +9,7 @@
 
 		// Return out of function if commenting is closed for this post
 	    if (!comments_open()) {
+			echo "<h2>Comments Closed</h2>";
 	    	return $comments;
 	    }
 
@@ -28,7 +29,16 @@
 
 	    // Decide which stylesheet to use
 	    $customStylesheet = fbComments_getStylesheet();
-
+		
+		if(empty($options['appId'])) $options = get_option('fbComments'); 	
+		if(empty($options['appSecret'])) $options = get_option('fbComments'); 
+		if(empty($options['appId'])) $options['appId'] = get_option('fbComments_appId');
+		if(empty($options['appSecret'])) $options['appSecret'] = get_option('fbComments_appSecret');
+		
+		
+		
+		
+		
 		// Only insert the Facebook comments if both an application ID and an application secret has been set
 		if (!empty($options['appId']) && !empty($options['appSecret'])) {
 			// Store our access token if it hasn't already been saved

@@ -162,7 +162,9 @@
 
 	// Create the function used in the action hook
 	function fbcomments_add_dashboard_widgets() {
-		wp_add_dashboard_widget('dashboard_widget', 'Recent Facebook comments', 'fbcomments_dashboard_widget_function');
+		global $options;
+		if ($options['showDBWidget'] == true)
+			wp_add_dashboard_widget('dashboard_widget', 'Recent Facebook comments', 'fbcomments_dashboard_widget_function');
 	}
 
 
