@@ -86,7 +86,7 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 	
 ?>
 	 
-	<div class="updated">Version 2.1.2 XID: <?php $_loadversion ?></div>
+	<div class="updated">Version 2.1.2 XID: <?php echo $_loadversion; ?></div>
 	<div id="poststuff" class="postbox">
 		<h3><?php _e('Enable/Disable Facebook\'s New Comment System'); ?></h3>
 
