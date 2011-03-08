@@ -9,7 +9,7 @@
 	 * @since 3.0.0
 	 */
 	function fbcomments_dashboard_widget_function() {
-		global $options;
+		global $fbc_options;
 
 		wp_register_style('widgets', FBCOMMENTS_CSS_WIDGETS, array(), FBCOMMENTS_VER);
 		wp_enqueue_style('widgets');
@@ -17,12 +17,12 @@
 		// needed for fb api call? excep 104 without it
 		fbComments_storeAccessToken();
 
-		$atoken =  $options['accessToken'];
+		$atoken =  $fbc_options['accessToken'];
 		$fb = fbComments_getFbApi();
 
 
 		$commentsq = "SELECT fromid, text, id, time, username, xid, object_id ".
-				  "FROM comment WHERE xid IN (SELECT xid FROM comments_info WHERE app_id={$options['appId']})".
+				  "FROM comment WHERE xid IN (SELECT xid FROM comments_info WHERE app_id={$fbc_options['appId']})".
 				  "ORDER BY time desc";
 		$usersq = "SELECT id, name, url, pic_square FROM profile ".
 				  "WHERE id IN (SELECT fromid FROM #comments)";
@@ -37,10 +37,10 @@
 
 		$comments = $result;
 		$ncomms = sizeof($comments[0]['fql_result_set']);
-		$dcomms = $ncomms < $options['dashNumComments'] ? $ncomms : $options['dashNumComments'];
+		$dcomms = $ncomms < $fbc_options['dashNumComments'] ? $ncomms : $fbc_options['dashNumComments'];
 
 		if ($ncomms == 0) { echo "<div style='text-align:right; font-size:.8em'>
-					<a href='https://developers.facebook.com/tools/comments?id={$options['appId']}'>Administer Comments</a></div><hr />"
+					<a href='https://developers.facebook.com/tools/comments?id={$fbc_options['appId']}'>Administer Comments</a></div><hr />"
 					.'No Comments!';
 		} else {
 			// $ncomms  = $ncomms < 10 ? $ncomms : 10;
@@ -52,7 +52,7 @@
 				"<div id=\"fb-root\"></div>
 				<script>
 				  window.fbAsyncInit = function() {
-					FB.init({appId: '{$options['appId']}', status: true, cookie: true, xfbml: true});
+					FB.init({appId: '{$fbc_options['appId']}', status: true, cookie: true, xfbml: true});
 				  };
 				  (function() {
 					var e = document.createElement('script'); e.async = true;
@@ -62,7 +62,7 @@
 				  }());
 				</script>"
 				."<div style='text-align:right; font-size:.8em'>
-					<a href='https://developers.facebook.com/tools/comments?id={$options['appId']}'>Administer Comments</a></div><hr />"
+					<a href='https://developers.facebook.com/tools/comments?id={$fbc_options['appId']}'>Administer Comments</a></div><hr />"
 				// should probably change this to class so that it validates
 				.'<div id="the-comment-list" class="list:comment" style="margin-top: -1em">';
 
@@ -72,7 +72,7 @@
 			for ($i=0,$par=0;$i<$dcomms;$i++,$par++) {
 				// for people who use the same app id for more than one site,
 				// only return results unique to this xid
-				if ( strncmp($comments[$i]['xid'],$options['xid'],15) ) { $par--; continue; }
+				if ( strncmp($comments[$i]['xid'],$fbc_options['xid'],15) ) { $par--; continue; }
 
 				// find matching user
 				for ($j=0;$j<count($users);$j++) {
@@ -162,8 +162,8 @@
 
 	// Create the function used in the action hook
 	function fbcomments_add_dashboard_widgets() {
-		global $options;
-		if ($options['showDBWidget'] == true)
+		global $fbc_options;
+		if ($fbc_options['showDBWidget'] == true)
 			wp_add_dashboard_widget('dashboard_widget', 'Recent Facebook comments', 'fbcomments_dashboard_widget_function');
 	}
 
@@ -200,8 +200,8 @@
 			extract( $args );
 			$title = apply_filters('widget_title', $instance['title']);
 
-			global $options;
-			$atoken = $options['accessToken'];
+			global $fbc_options;
+			$atoken = $fbc_options['accessToken'];
 
 			$fb = fbComments_getFbApi();
 			/*
@@ -211,12 +211,12 @@
 			in (select comments_fbid from link_stat where url="http://developers.facebook.com/blog/post/472")'
 			*/
 			$commentsq = "SELECT fromid, text, id, time, username, xid, object_id ".
-					  "FROM comment WHERE xid IN (SELECT xid FROM comments_info WHERE app_id={$options['appId']})".
+					  "FROM comment WHERE xid IN (SELECT xid FROM comments_info WHERE app_id={$fbc_options['appId']})".
 					  "ORDER BY time desc";
 			// $commurl = urlencode('');
 			// $commentsq = "SELECT fromid, text, id, time, username, xid, post_id, post_fbid, object_id ".
 						 // "FROM comment ".
-						 // "WHERE (xid IN (SELECT xid FROM comments_info WHERE app_id={$options['appId']})) ".
+						 // "WHERE (xid IN (SELECT xid FROM comments_info WHERE app_id={$fbc_options['appId']})) ".
 						 // "OR object_id IN (SELECT comments_fbid FROM link_stat WHERE url='$commurl') ".
 						 // "ORDER BY time desc";
 			
@@ -253,7 +253,7 @@
 			$show_avatar = isset($instance['show_avatar']) ? $instance['show_avatar'] : true;
 
 			for ($i=0,$par=0;$i<$ncomms;$i++,$par++) {
-				if ( strncmp($comments[$i]['xid'],$options['xid'],15) ) { $par--; continue; }
+				if ( strncmp($comments[$i]['xid'],$fbc_options['xid'],15) ) { $par--; continue; }
 				// find matching user
 				for ($j=0;$j<count($users);$j++) {
 					if ($comments[$i]['fromid'] == $users[$j]['id']) {

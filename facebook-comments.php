@@ -87,8 +87,8 @@
 	register_uninstall_hook(__FILE__, 'fbComments_uninit');
 	
 
-	global $options;  // main options array in wp database options table
-	$options = get_option('fbComments');
+	global $fbc_options;  // main options array in wp database options table
+	$fbc_options = get_option('fbComments');
 
 	// Display a message prompting the user to enter a Facebook application ID and secret upon plugin activation (if they aren't already set)
 	if (get_option('fbComments_displayAppIdWarning')) {
@@ -99,7 +99,7 @@
 	}
 
 	// Enqueue correct stylesheet if user wants to hide the WordPress commenting form
-	if ($options['hideWpComments']) {
+	if ($fbc_options['hideWpComments']) {
 		function fbComments_enqueueHideWpCommentsCss() {
 			wp_register_style('fbComments_hideWpComments', FBCOMMENTS_CSS_HIDEWPCOMMENTS, array(), FBCOMMENTS_VER);
             wp_enqueue_style('fbComments_hideWpComments');
@@ -108,8 +108,8 @@
 		add_action('init', 'fbComments_enqueueHideWpCommentsCss');
 	}
 
-	// Add appropriate language attributes (must use get_option() because $options[] isn't available at this point)
-	if (($options['includeFbmlLangAttr']) || ($options['includeOpenGraphLangAttr'])) {
+	// Add appropriate language attributes (must use get_option() because $fbc_options[] isn't available at this point)
+	if (($fbc_options['includeFbmlLangAttr']) || ($fbc_options['includeOpenGraphLangAttr'])) {
 		function fbComments_includeLangAttrs($attributes='') {
 			if (get_option('fbComments_includeFbmlLangAttr')) {
 				$attributes .= ' xmlns:fb="http://www.facebook.com/2008/fbml"';
@@ -126,17 +126,17 @@
 	}
 
 	// Add OpenGraph meta information
-	if ($options['includeOpenGraphMeta']) {
+	if ($fbc_options['includeOpenGraphMeta']) {
 		function fbComments_addOpenGraphMeta() {
 			global $wp_query;
-			global $options;
+			global $fbc_options;
 
 			$postId = $wp_query->post->ID;
 		    $postTitle = single_post_title('', false);
 		    $postUrl = get_permalink($postId);
 		    $siteName = get_bloginfo('name');
-		    $appId = $options['appId'];
-			if (strlen($options['notifyUserList']) > 0) { echo "<meta property='fb:admins' content='{$options['notifyUserList']}'>"; }
+		    $appId = $fbc_options['appId'];
+			if (strlen($fbc_options['notifyUserList']) > 0) { echo "<meta property='fb:admins' content='{$fbc_options['notifyUserList']}'>"; }
 			echo "<meta property='og:title' content='$postTitle' />
 <meta property='og:site_name' content='$siteName' />
 <meta property='og:url' content='$postUrl' />
@@ -199,7 +199,7 @@
 
 
 	// make sure both are set to avoid fatal error upon getting fbapi
-	if (empty($options['appId']) || empty($options['appSecret'])) {
+	if (empty($fbc_options['appId']) || empty($fbc_options['appSecret'])) {
 		fbComments_log("App ID or secret not set, not loading widgets");
 	} else {
 		// hook for admin dashboard widget
@@ -217,14 +217,14 @@
 	 **********************************/
 	 
 	// Ensure we're able to display the comment box
-	if ($options['includeFbComments']) {
+	if ($fbc_options['includeFbComments']) {
 		add_filter('comments_array', 'facebook_comments');
 	}
 
 	// Combine the Facebook and WordPress comment counts if desired
-	if ($options['combineCommentCounts'] &&
-		!empty($options['appId']) &&
-		!empty($options['appSecret'])) {
+	if ($fbc_options['combineCommentCounts'] &&
+		!empty($fbc_options['appId']) &&
+		!empty($fbc_options['appSecret'])) {
 			add_filter('get_comments_number', 'fbComments_combineCommentCounts');
 	}
 

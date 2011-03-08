@@ -5,7 +5,7 @@
  **********************************/
 function fbComments_getCachedCommentCount($xid, $wpCommentCount) {
 	fbComments_log('In ' . __FUNCTION__ . "(xid=$xid, wpCommentCount=$wpCommentCount)");
-	global $options;
+	global $fbc_options;
 
 	$fbCommentCount = get_option("fbComments_commentCount_$xid");
 
@@ -14,16 +14,16 @@ function fbComments_getCachedCommentCount($xid, $wpCommentCount) {
 
 function fbComments_getProperCommentCount($fbCommentCount=0, $wpCommentCount=0) {
 	fbComments_log('In ' . __FUNCTION__ . "(fbCommentCount=$fbCommentCount, wpCommentCount=$wpCommentCount)");
-	global $options;
+	global $fbc_options;
 
 	// If the WordPress comments are hidden, just return the Facebook comments count
-	if ($options['hideWpComments']) {
+	if ($fbc_options['hideWpComments']) {
 		fbComments_log("    Returning a Facebook comment count of $fbCommentCount");
 		return $fbCommentCount;
 	// If commenting is closed on this post or we shouldn't be displaying Facebook comments due to settings, just return the WordPress comments count
 	} elseif (!comments_open() ||
-			  ($options['displayPagesOrPosts'] == 'pages') && (!is_page()) ||
-			  ($options['displayPagesOrPosts'] == 'posts') && (!is_single())) {
+			  ($fbc_options['displayPagesOrPosts'] == 'pages') && (!is_page()) ||
+			  ($fbc_options['displayPagesOrPosts'] == 'posts') && (!is_single())) {
 	  return $wpCommentCount;
 	} else {
 		fbComments_log(sprintf('    Returning a combined comment count of %d', $fbCommentCount+$wpCommentCount));
@@ -37,7 +37,7 @@ function fbComments_getProperCommentCount($fbCommentCount=0, $wpCommentCount=0) 
  * Thanks to Almog Baku for help with the Facebook API calls (http://www.almogbaku.com/)
  */
 function fbComments_cacheAllCommentCounts() {
-	global $options;
+	global $fbc_options;
 	fbComments_log('In ' . __FUNCTION__ . '()');
 
 	$fb = fbComments_getFbApi();
@@ -46,7 +46,7 @@ function fbComments_cacheAllCommentCounts() {
 	if ($posts) {
 		fbComments_log(sprintf('    Looping through %d posts', count($posts)));
 		foreach ($posts as $post) {
-			$xid = $options['xid'] . "_post{$post->ID}";
+			$xid = $fbc_options['xid'] . "_post{$post->ID}";
 			$query = array(
 				'method' => 'fql.query',
 				'query'	 => 'SELECT count FROM comments_info WHERE app_id="' . $fb->getAppId() . '" AND xid="' . $xid . '"'
@@ -69,10 +69,10 @@ function fbComments_cacheAllCommentCounts() {
 
 function fbComments_combineCommentCounts($value) {
 	fbComments_log('In ' . __FUNCTION__ . "(value=$value)");
-	global $options, $wp_query;
+	global $fbc_options, $wp_query;
 
 	$postId = $wp_query->post->ID;
-	$xid = $options['xid'] . "_post$postId";
+	$xid = $fbc_options['xid'] . "_post$postId";
 
 	// Return the cached comment count (if it exists)
 	if (get_option("fbComments_commentCount_$xid")) {
