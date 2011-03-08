@@ -79,8 +79,14 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 		echo '<div class="error"><p><strong>' . __('The Facebook comments box will not be included in your posts until you set a valid application ID and application secret.').'</strong></p>'.$id_help.'</div>';
 	elseif ($errors != false)
 		echo '<div class="error"><p><strong>' . __($errors) . '</strong></p>'.$id_help.'</div>';
-
+		
+	$_loadversion = get_option('fbComments_xid');
+	// 2.1.2 loaded?
+	$_loadversion = (strlen($_loadversion) < 1) ? 'loaded' : $_loadversion;
+	
 ?>
+	 
+	<div class="updated">Version 2.1.2 XID: <?php $_loadversion ?></div>
 	<div id="poststuff" class="postbox">
 		<h3><?php _e('Enable/Disable Facebook\'s New Comment System'); ?></h3>
 
