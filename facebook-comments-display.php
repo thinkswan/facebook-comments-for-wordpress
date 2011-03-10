@@ -37,8 +37,6 @@
 		
 		
 		
-		
-		
 		// Only insert the Facebook comments if both an application ID and an application secret has been set
 		if (!empty($fbc_options['appId']) && !empty($fbc_options['appSecret'])) {
 			// Store our access token if it hasn't already been saved
@@ -187,6 +185,7 @@
 				// "publish_feed='$publishToWall' ",
 				// "</fb:comments>";
 		// }
+		echo "commentVersion: {$fbc_options['commentVersion']}";
 		if ($fbc_options['v1plusv2'] == 1) {
 			$fbc_options['hideFbLikeButton'] = true;
 			update_option('fbComments', $fbc_options);
@@ -206,15 +205,23 @@
 				"title='$postTitle' ",
 				"url='$postUrl' ",
 				"notify='true'></fb:comments>";
-		} else if ($fbc_options['newFBC'] == 1) {
+				
+		} else if ($fbc_options['commentVersion'] == 'v2migrated') {
 			// $xid = urlencode($xid);
 			echo "\t<fb:comments xid='$xid' ",
 				"numposts='{$fbc_options['numPosts']}' ",
 				"width='{$fbc_options['width']}' ",
 				"publish_feed='$publishToWall' ",
 				"migrated='1'></fb:comments>";
-		
-		} else {
+				
+		} else if ($fbc_options['commentVersion'] == 'v2') {
+			echo "\t<fb:comments xid='$xid' href='$postUrl' ",
+				"numposts='{$fbc_options['numPosts']}' ",
+				"width='{$fbc_options['width']}' ",
+				"publish_feed='$publishToWall' ",
+				"migrated='1'></fb:comments>";
+				
+		} else if ($fbc_options['commentVersion'] == 'v1') {
 			echo "\t<fb:comments xid='$xid' ",
 				"numposts='{$fbc_options['numPosts']}' ",
 				"width='{$fbc_options['width']}' ",

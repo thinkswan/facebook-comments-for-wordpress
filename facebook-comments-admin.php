@@ -36,7 +36,7 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 <div class="wrap">
   <?php //screen_icon(); ?>
   <h2><?php _e('Facebook Comments for WordPress Options'); ?></h2>
-  
+
   <form method="post" action="options.php">
 	 <table border="1" style="width:100%">
 	<tbody><tr>
@@ -44,7 +44,7 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 	<td style="width:33%"> <div id="icon-help"></div>
 		<h6><?php _e('If you need help, please refer to the <a href="http://bit.ly/i3lThG">official FAQ</a>'); ?>
 		</h6>
-		
+
 	</td>
 	<td style="width:auto">
 		<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=fbc%40we8u%2ecom&lc=US&item_name=Facebook%20Comments%20for%20WordPress&item_number=shaunds&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">
@@ -52,7 +52,7 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 	</td>
 	</tr></tbody>
   </table>
-	
+
 <?php
 	settings_fields('fbComments_options');
 	$fbc_options = get_option('fbComments');
@@ -79,26 +79,31 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 		echo '<div class="error"><p><strong>' . __('The Facebook comments box will not be included in your posts until you set a valid application ID and application secret.').'</strong></p>'.$id_help.'</div>';
 	elseif ($errors != false)
 		echo '<div class="error"><p><strong>' . __($errors) . '</strong></p>'.$id_help.'</div>';
-		
+
 	$_loadversion = get_option('fbComments_xid');
 	// 2.1.2 loaded?
 	$_loadversion = (strlen($_loadversion) < 1) ? 'loaded' : $_loadversion;
-	
 ?>
-	 
+
 	<div class="updated">Version 2.1.2 XID: <?php if($_loadversion) echo $_loadversion; ?></div>
 	<div id="poststuff" class="postbox">
 		<h3><?php _e('Enable/Disable Facebook\'s New Comment System'); ?></h3>
 
 		<div class="inside">
-			<p><input type="checkbox" id="fbComments_newFBC" name="fbComments[newFBC]" value="1" <?php checked($fbc_options['newFBC'], 1 ); ?> size="20">
-				<label for="fbComments_newFBC"> <?php _e('Enable the just-released version of facebook\'s '.
-						'comment plugin. This is quite new, and some people are having problems. '. 
-						'See discussion <a href="http://bit.ly/fuoDaM">here</a>'); ?>
-				</label>
+			<p><?php _e('Enable the just-released version of facebook\'s '.
+						'comment plugin. This is quite new, and some people are having problems. '.
+						'See discussion <a href="http://bit.ly/fuoDaM">here</a><br />
+						* Selecting "new" will show comments from both the old system and the new one in the same comment box (migrated="1", as described in the above link).<br />
+						* "v1 only" will use only the old system <em>(only way to have custom css, like button, etc.)</em>.<br />
+						* "v2 only" will use only the new system. This is the only way to get all the features of the new system (unless you select the option below).<br />'); ?>
+				<select name="fbComments[commentVersion]">
+					<option value="v2migrated"<?php if ($fbc_options['commentVersion'] == 'v2migrated') echo ' selected="selected"'; ?>>new</option>
+					<option value="v1"<?php if ($fbc_options['commentVersion'] == 'v1') echo ' selected="selected"'; ?>>v1 only</option>
+					<option value="v2"<?php if ($fbc_options['commentVersion'] == 'v2') echo ' selected="selected"'; ?>>v2 only</option>
+				</select>
 			</p>
 			<p><input type="checkbox" id="fbComments_v1plusv2" name="fbComments[v1plusv2]" value="1" <?php checked($fbc_options['v1plusv2'], 1 ); ?>>
-				<label for="fbComments_newUser"> <?php _e('Display both v1 and v2 comments; ignores above setting (<b>warning: not pretty looking</b>)'); ?>
+				<label for="fbComments_v1plusv2"> <?php _e('Display both v1 and v2 comments; ignores above setting (<b>warning: not pretty looking</b>)'); ?>
 				</label>
 			</p>
 			<?php /*
@@ -131,12 +136,17 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 
 			<p><input type="checkbox" id="fbComments_combineCommentCounts" name="fbComments[combineCommentCounts]" value="1" <?php checked($fbc_options['combineCommentCounts'], 1 ); ?> size="20">
 				<label for="fbComments_combineCommentCounts"> <?php _e('Combine WordPress and Facebook comment counts'); ?></label></p>
-			
+
 			<p><input type="checkbox" id="fbComments_showDBWidget" name="fbComments[showDBWidget]" value="1" <?php checked($fbc_options['showDBWidget'], 1 ); ?>>
 				<label for="fbComments_newUser"> <?php _e('Show the Dashboard Recent Comments admin widget'); ?>
 				</label>
-			</p>			
-			
+			</p>
+
+			<p><input type="checkbox" id="fbComments_enableCache" name="fbComments[enableCache]" value="1" <?php checked($fbc_options['enableCache'], 1 ); ?>>
+				<label for="fbComments_enableCache"> <?php _e('Enable comment caching (<em>enable if site is loading slowly</em>).'); ?>
+				</label>
+			</p>
+
 			<p><a href="https://developers.facebook.com/tools/comments/?id=<?php echo $fbc_options['appId']; ?>">
 			<img class="img" src="https://s-static.ak.facebook.com/rsrc.php/v1/yh/r/sFEt4HFKXwP.gif" style="top: -1px;" width="15" height="16" />
 			Moderation Settings</a> <!--<em><strong>(inline editing of these settings is in development)</strong></em> --></p>
@@ -150,7 +160,7 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 			<p><input type="checkbox" id="fbComments_notify" name="fbComments[notify]" value="1" <?php checked($fbc_options['notify'], 1 ); ?> size="20">
 				<label for="fbComments_notify"><?php _e(' Email me whenever a comment is posted'); ?></label>
 				<em><?php _e(" (Email notifications will be sent to the following address: " . get_bloginfo('admin_email') . ". You can change this on the <a href='" .  admin_url('options-general.php') . "'>General Settings</a> page)"); ?></em></p>
-			
+
 			<p><?php _e('Notify these facebook users of new comments (user ID, see <a href="//www.facebook.com/note.php?note_id=91532827198">here</a>): '); ?>
 				<input type="text" name="fbComments[notifyUserList]" value="<?php echo $fbc_options['notifyUserList']; ?>" size="60">
 				<em><?php _e(' <br />for multiple users, seperate with commas and no spaces (e.g., ID1,ID2,ID3)'); ?></em></p>

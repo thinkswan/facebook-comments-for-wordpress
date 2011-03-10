@@ -20,7 +20,7 @@ function fbComments_init() {
 	if (!empty($fbc_options['appId']) &&
 		!empty($fbc_options['appSecret'])) {
 			update_option('fbComments_displayAppIdWarning', false);
-			fbComments_cacheAllCommentCounts();
+			if ($fbc_options['enableCache'] == true) { fbComments_cacheAllCommentCounts(); }
 	} else { update_option('fbComments_displayAppIdWarning', true); }
 }
 
@@ -52,15 +52,18 @@ function fbComments_doUpdate() {
 	$fbc_options['xid'] = get_option('fbComments_xid');	// see if upgrading from v < 3
 	if (strlen($fbc_options['xid']) < 1) { $fbc_options['xid'] = $save_xid; }
 	
-	$fbc_options['includeFbJs'] = true;
-	$fbc_options['includeFbJsOldWay'] = false;
-	$fbc_options['includeFbmlLangAttr'] = true;
-	$fbc_options['includeOpenGraphLangAttr'] = true;
-	$fbc_options['includeOpenGraphMeta'] = true;
+	
+	
 	$fbc_options['language'] = get_option('fbComments_language');
-	$fbc_options['dashNumComments'] = 10;
+	if (strlen($fbc_options['dashNumComments']) < 0) $fbc_options['dashNumComments'] = 10; // if not set
+	if (strlen($fbc_options['commentVersion']) < 1) $fbc_options['commentVersion'] = 'v1';
 	
 	// handle upgrading from <=2.1.2
+	if (get_option('fbComments_includeFbJs') == true) { $fbc_options['includeFbJs'] = true; }
+	if (get_option('fbComments_includeFbJsOldWay') == true) { $fbc_options['includeFbJsOldWay'] = true; }
+	if (get_option('fbComments_includeFbmlLangAttr') == true) { $fbc_options['includeFbmlLangAttr'] = true; }
+	if (get_option('fbComments_includeOpenGraphLangAttr') == true) { $fbc_options['includeOpenGraphLangAttr'] = true; }
+	if (get_option('fbComments_includeOpenGraphMeta') == true) { $fbc_options['includeOpenGraphMeta'] = true; }
 	if (get_option('fbComments_includeFbComments') == true) { $fbc_options['includeFbComments'] = true; }
 	if (get_option('fbComments_hideWpComments') == true) { $fbc_options['hideWpComments'] = true; } 
 	if (get_option('fbComments_combineCommentCounts') == true) { $fbc_options['combineCommentCounts'] = true; }

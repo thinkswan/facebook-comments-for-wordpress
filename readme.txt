@@ -2,9 +2,9 @@
 Contributors: thinkswan, AlmogBaku, sboddez, we8u, .shaun
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=fbc%40we8u%2ecom&lc=US&item_name=Facebook%20Comments%20for%20WordPress&item_number=shaund&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: facebook comments, comments, facebook, social graph, posts, pages, discussion, community
-Requires at least: 2.9.2
-Tested up to: 3.1
-Stable tag: 3.0.2
+Requires at least: 3.0.4
+Tested up to: 3.2
+Stable tag: 3.0.2.2
 
 Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, recent comments widget, etc.
 
@@ -29,7 +29,7 @@ Features:
 
 == Installation ==
 
-1. Unzip `facebook-comments-for-wordpress.3.0.2.zip` to your `/wp-content/plugins/` directory
+1. Unzip `facebook-comments-for-wordpress.3.0.2.2.zip` to your `/wp-content/plugins/` directory
 2. Activate the plugin through the `Plugins` menu in WordPress (depending on the number of posts on your site, activation may take a moment because the plugin is caching all of your comment counts)
 3. Setup the plugin options by using the `Facebook Comments` page (located under the `Settings` menu)
 
@@ -43,6 +43,18 @@ Features:
 If you need help, please refer to the official FAQ at http://we8u.com/facebook-comments/#faq.
 
 == Changelog ==
+
+= 3.0.2.2 =
+* To see what facebook has changed/removed in v2, please read this: http://bit.ly/fbc3_changes. Briefly, gone is custom css, dark site, like button. If you want these, select "v1 only" (the default) on the settings page.
+* IMPORTANT: WRITE DOWN YOUR XID BEFORE INSTALL THIS. This should be completely unnecessary, but it's just a wise precaution to take.
+* Added a notice in the plugin settings which displays your XID from 2.1.2 or before.
+* May not work site wide with multisite (previously WordPress MU)
+* Now displays "Comments Disabled" if comments are disabled for a page/post
+* Bugfix: Fixed a conflict with a global variable which was causing the plugin to not load on certain sites.
+* Bugfix: The visual editor should work again.
+* Bugfix: Those who were unable to activate the plugin should now be able to (see next option).
+* Option: Ability to disable comment caching (disabled by default).
+* Option: Ability to show only v2 comments. See details on option page.
 
 = 3.0.2 =
 * Updated to handle the way WP3.1 updates plugins. see: http://bit.ly/wp3_1noupdate
@@ -147,6 +159,13 @@ If you need help, please refer to the official FAQ at http://we8u.com/facebook-c
 * Initial release
 
 == Upgrade Notice ==
+
+= 3.0.2.2 =
+* Upgrade, then pray...
+* If you're using any 3.0.x version, this update resolves most issues with those versions.
+* Multisite users, this may or may not work for you. If you have it installed on a WP MS site, drop me a line at fbc-multisite@we8u.com, if it's working, or even if it isn't.
+* If you have used 2.1.2 or earlier on your site, then the XID from that version will display as a notice on the settings page (wp-admin/options-general.php?page=facebook-comments). This is just a precaution, everything should load automatically
+* See changelog for more.
 
 = 3.0.2 =
 * This update does the same thing as deactivating then reactivating 3.0.1. The reason for this update is that WP3.1 changed the way plugins update. see: http://bit.ly/wp3_1noupdate

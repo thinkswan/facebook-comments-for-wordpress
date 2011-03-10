@@ -4,12 +4,12 @@
 	Plugin URI: http://we8u.com/facebook-comments
 	Description: Allows your visitors to comment on posts using their Facebook profile. Supports custom styles, notifications, combined comment counts, etc.
 	Author: we8u
-	Version: 3.0.2
+	Version: 3.0.2.2
 	Author URI: http://we8u.com/
 	*/
 
 	define('FBCOMMENTS_ERRORS', false); // Set to true while developing, false for a release
-	define('FBCOMMENTS_VER', '3.0.2');
+	define('FBCOMMENTS_VER', '3.0.2.2');
 	define('FBCOMMENTS_REQUIRED_PHP_VER', '5.0.0');
 	define('FBCOMMENTS_AUTHOR', 'we8u');
 	define('FBCOMMENTS_WEBPAGE', 'http://we8u.com/facebook-comments/');
@@ -69,11 +69,12 @@
 		'darkSite'					=> '',
 		'noBox'						=> false,
 		'dashNumComments'			=> 10,
-		'newFBC'					=> false,
 		'v1plusv2'					=> false,
 		// 'newUser'					=> false,
 		'notifyUserList'			=> '',
-		'showDBWidget'				=> false
+		'showDBWidget'				=> false,
+		'enableCache'				=> false,
+		'commentVersion'			=> 'v1'
 	);
 	
 	
