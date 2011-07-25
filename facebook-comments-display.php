@@ -147,7 +147,7 @@
 	var addedComment = function(response) {
 		//console.log('fbComments: Caught added comment');
 		//console.log('fbComments:     Making AJAX call to update Facebook comment count');
-		$.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'addComment', xid: '$xid' }, function(resp) {
+		jQuery.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'addComment', xid: '$xid' }, function(resp) {
 			if (resp === 'true') {
 				//console.log('fbComments:     Updated and cached Facebook comment count for post with xid=$xid');
 			} else {
@@ -158,7 +158,7 @@
 		if ($fbc_options['notify']) {
 			echo "
 		//console.log('fbComments:     Making AJAX call to send email notification');
-		$.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'sendNotification', xid: '$xid', postTitle: '$postTitle', postUrl: '$postUrl' }, function(resp) {
+		jQuery.post('" . FBCOMMENTS_PATH . "facebook-comments-ajax.php', { fn: 'sendNotification', xid: '$xid', postTitle: '$postTitle', postUrl: '$postUrl' }, function(resp) {
 			if (resp === 'true') {
 				//console.log('fbComments:     Sent email notification');
 			} else {
