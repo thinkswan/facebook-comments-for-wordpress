@@ -170,7 +170,7 @@
 		echo "
 	};
 
-	FB.Event.subscribe('comments.add', addedComment);
+    FB.Event.subscribe('comment.create', addedComment);
 </script>\n";
 	}
 
