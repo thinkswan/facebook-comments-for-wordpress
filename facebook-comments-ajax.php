@@ -20,11 +20,13 @@
 	switch ($_POST['fn']) {
 		// Update Facebook comment count
     	case "addComment":
-            $newCount = $count+1;
             // no break on purpose
-
         case "removeComment":
-            $newCount = $count-1;
+            if ($_POST['fn']=='addComment') {
+                $newCount = $count+1;
+            } else {
+                $newCount = $count-1;
+            }
 
     		fbComments_log('In ' . basename(__FILE__) . " with fn={$_POST['fn']}, xid={$_POST['xid']}");
     	    if (update_option("fbComments_commentCount_{$_POST['xid']}", $newCount)) {
