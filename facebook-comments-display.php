@@ -7,12 +7,6 @@
 	function facebook_comments($comments='') {
 		global $fbc_options, $wp_query;
 
-		// Return out of function if commenting is closed for this post
-	    if (!comments_open()) {
-			echo "<h2>Comments Closed</h2>";
-	    	return $comments;
-	    }
-
 	    // Return out of function if we're only supposed to display comments on pages OR posts
 	    if (($fbc_options['displayPagesOrPosts'] == 'pages') && (!is_page())) {
 	    	return $comments;
@@ -23,19 +17,18 @@
 	    }
 
 		$postId = $wp_query->post->ID;
+		// Return out of function if commenting is closed for this post
+	    if (!comments_open()) {
+			echo "<h2>Comments Closed</h2>";
+	    	return $comments;
+	    }
+
 	    $xid = $fbc_options['xid'] . "_post$postId";
 	    $postTitle = get_the_title($postId);
 	    $postUrl = get_permalink($postId);
 
 	    // Decide which stylesheet to use
 	    $customStylesheet = fbComments_getStylesheet();
-		
-		// if(empty($fbc_options['appId'])) $fbc_options = get_option('fbComments'); 	
-		// if(empty($fbc_options['appSecret'])) $fbc_options = get_option('fbComments'); 
-		// if(empty($fbc_options['appId'])) $fbc_options['appId'] = get_option('fbComments_appId');
-		// if(empty($fbc_options['appSecret'])) $fbc_options['appSecret'] = get_option('fbComments_appSecret');
-		
-		
 		
 		// Only insert the Facebook comments if both an application ID and an application secret has been set
 		if (!empty($fbc_options['appId']) && !empty($fbc_options['appSecret'])) {
@@ -79,14 +72,10 @@
 	function fbComments_getStylesheet() {
 		global $fbc_options;
 
-		if (($fbc_options['hideFbLikeButton']) && ($fbc_options['darkSite'])) {
+		if (($fbc_options['darkSite'])) {
 	    	return FBCOMMENTS_CSS_HIDELIKEANDDARKSITE . '?' . fbComments_getRandXid();
-	    } elseif ($fbc_options['hideFbLikeButton']) {
-	    	return FBCOMMENTS_CSS_HIDELIKE . '?' . fbComments_getRandXid();
-	    } elseif ($fbc_options['darkSite']) {
-	    	return FBCOMMENTS_CSS_DARKSITE . '?' . fbComments_getRandXid();
 	    } else {
-	    	return FBCOMMENTS_CSS_HIDEFBLINK . '?' . fbComments_getRandXid();
+	    	return FBCOMMENTS_CSS_HIDELIKE . '?' . fbComments_getRandXid();
 	    }
 	}
 
@@ -185,15 +174,32 @@
 				// "publish_feed='$publishToWall' ",
 				// "</fb:comments>";
 		// }
-		echo "commentVersion: {$fbc_options['commentVersion']}";
+		$siteisdark = '';
+		if ($fbc_options['darkSite'] == true) $siteisdark = "colorscheme='dark'";
+		if (!$fbc_options['hideFbLikeButton']) {
+			$likebtn = "<iframe src='https://www.facebook.com/plugins/like.php?"
+				."href=$postUrl".'&amp;'
+				."layout={$fbc_options['like']['layout']}".'&amp;';
+				
+			if ($fbc_options['like']['faces']) $likebtn .= 'show_faces=true&amp;';
+			else $likebtn .= 'show_faces=false&amp;';
+			
+			$likebtn .= "width={$fbc_options['like']['width']}".'&amp;'
+				."action={$fbc_options['like']['verb']}".'&amp;'
+				."font={$fbc_options['like']['font']}".'&amp;'
+				."colorscheme={$fbc_options['like']['color']}"
+				."' scrolling='no' frameborder='0' style='{$fbc_options['like']['style']}' allowTransparency='true'></iframe>";
+		} else $likebtn = '';
+		
 		if ($fbc_options['v1plusv2'] == 1) {
-			$fbc_options['hideFbLikeButton'] = true;
+			echo "<!-- facebook comments v1 + v2 -->\n";
 			update_option('fbComments', $fbc_options);
-			echo "\t<fb:comments xid='$xid' href='$postUrl' ",
+			echo $likebtn,"\n";
+			echo "\t<fb:comments xid='$xid' href='$postUrl' $siteisdark ",
 				"numposts='{$fbc_options['numPosts']}' ",
 				"width='{$fbc_options['width']}' ",
 				"publish_feed='$publishToWall' ",
-				"migrated='1'></fb:comments>";
+				"migrated='1'></fb:comments><hr style='width:auto' />";
 				
 			echo "\t<fb:comments xid='$xid' ",
 				"numposts='{$fbc_options['numPosts']}' ",
@@ -207,21 +213,27 @@
 				"notify='true'></fb:comments>";
 				
 		} else if ($fbc_options['commentVersion'] == 'v2migrated') {
-			// $xid = urlencode($xid);
-			echo "\t<fb:comments xid='$xid' ",
+			// $newpostUrl = urlencode(urlencode($postUrl));
+			echo "<!-- facebook comments v2 with imported v1 comments -->\n";
+			echo $likebtn,"\n";
+			echo "\t<fb:comments xid='$xid' url='$postUrl' $siteisdark ",
 				"numposts='{$fbc_options['numPosts']}' ",
 				"width='{$fbc_options['width']}' ",
 				"publish_feed='$publishToWall' ",
 				"migrated='1'></fb:comments>";
 				
 		} else if ($fbc_options['commentVersion'] == 'v2') {
-			echo "\t<fb:comments xid='$xid' href='$postUrl' ",
+			echo "<!-- facebook comments v2 only -->\n";
+			echo $likebtn,"\n";
+			echo "\t<fb:comments xid='$xid' href='$postUrl' $siteisdark ",
 				"numposts='{$fbc_options['numPosts']}' ",
 				"width='{$fbc_options['width']}' ",
 				"publish_feed='$publishToWall' ",
 				"migrated='1'></fb:comments>";
 				
 		} else if ($fbc_options['commentVersion'] == 'v1') {
+			echo "<!-- facebook comments v1 only -->\n";
+			echo $likebtn,"\n";
 			echo "\t<fb:comments xid='$xid' ",
 				"numposts='{$fbc_options['numPosts']}' ",
 				"width='{$fbc_options['width']}' ",
@@ -234,4 +246,47 @@
 				"notify='true'></fb:comments>";
 		}
 echo "</div>\n";
+	}
+	
+	/**
+	 * Show like button before the_excerpt
+	 *
+	 * @since 3.1
+	 */
+	function fbc_show_like_index($content) {
+		global $fbc_options, $wp_query;
+		
+		wp_reset_query(); # so is_home always works
+		if (!is_home()) return $content;
+		
+		$postUrl = get_permalink($wp_query->post->ID);
+		
+		$likebtn = "<iframe src='https://www.facebook.com/plugins/like.php?"
+				."href=$postUrl".'&amp;'
+				."layout={$fbc_options['indexLikebtn']['layout']}".'&amp;';
+		$likebtn .= ($fbc_options['indexLikebtn']['faces']) ? 'show_faces=true&amp;' : 'show_faces=false&amp;';
+		$likebtn .= "width={$fbc_options['indexLikebtn']['width']}".'&amp;'
+				."action={$fbc_options['indexLikebtn']['verb']}".'&amp;'
+				."font={$fbc_options['indexLikebtn']['font']}".'&amp;'
+				."colorscheme={$fbc_options['indexLikebtn']['color']}"
+				."' scrolling='no' frameborder='0' style='{$fbc_options['indexLikebtn']['style']}' allowTransparency='true'></iframe>";
+		
+		if ($fbc_options['indexLikebtn']['display'] == 'top') return $likebtn.$content;
+		return $content.$likebtn;
+	}
+	
+	/**
+	 * Show facebook iframe comment count
+	 *
+	 * @since 3.1
+	 */
+	function fbc_facebook_comment_count($ccount='') {
+		global $fbc_options, $wp_query;
+	    $postUrl = get_permalink($wp_query->post->ID);
+		
+		echo "</a><iframe src='http://www.facebook.com/plugins/comments.php?href=$postUrl&permalink=1'"
+				." scrolling='no' frameborder='0' style='{$fbc_options['v2ccstyle']}'"
+				." allowTransparency='true'>
+			</iframe><a>";
+		// echo "\tcmt</a><fb:comments-count href='$postUrl'></fb:comments-count> comments<a>";
 	}

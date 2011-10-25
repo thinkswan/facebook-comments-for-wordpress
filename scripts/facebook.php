@@ -487,7 +487,11 @@ class Facebook
   public function api(/* polymorphic */) {
     $args = func_get_args();
     if (is_array($args[0])) {
-      return $this->_restserver($args[0]);
+		try { return $this->_restserver($args[0]); }
+		catch (Exception $e) { 
+			self::errorLog("$e");
+			return 'Request to facebook timed out';
+		}
     } else {
       return call_user_func_array(array($this, '_graph'), $args);
     }
@@ -627,7 +631,8 @@ class Facebook
         ),
       ));
       curl_close($ch);
-      throw $e;
+      self::errorLog("$e");
+	  return 'Request to facebook timed out';
     }
     curl_close($ch);
     return $result;

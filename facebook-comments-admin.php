@@ -1,10 +1,15 @@
 <?php
 
 if (FBCOMMENTS_ERRORS) {
-	error_reporting(E_ALL); // Ensure all errors and warnings are verbose
+	error_reporting(E_ALL); # Ensure all errors and warnings are verbose
 }
 
-$homeurl = home_url('/');
+try {
+	$homeurl = home_url('/');
+} catch (Exception $e) {
+	$homeurl = get_bloginfo( 'home' );
+	echo '<div class="error"><p><strong>' . __('This plugin requires WordPress 3.0.4 or above. You are using ') . get_bloginfo( 'version' ) . __('. This plugin may still work, however it is not supported. Please update to the latest version of WordPress for the best experience.') . '</strong></p></div>';
+}
 $id_help = <<< END
 <p>Need help? Okay, do you have a facebook app?</p>
 <p><strong>Yes, I do</strong></p>
@@ -34,7 +39,7 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 <link rel="stylesheet" type="text/css" href="<?php echo FBCOMMENTS_CSS_ADMIN; ?>" />
 
 <div class="wrap">
-  <?php //screen_icon(); ?>
+  <?php screen_icon(); ?>
   <h2><?php _e('Facebook Comments for WordPress Options'); ?></h2>
 
   <form method="post" action="options.php">
@@ -68,24 +73,27 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 							'decompress' => true,
 							'sslverify' => false
 					));
-	$response = $response['body'];
-	$needle = 'wall';
-	if ( strpos($response, $needle) == false ) {
-		$fbc_options['appId'] = 'INVALID APP ID';
-		$errors = 'ERROR! Invalid application ID. Please double check to make sure it is correct. Note that this is not the same thing as your Facebook user ID';
-	}
-
+		
+	if (is_array($response)) {
+		$response = $response['body'];
+		$needle = 'wall';
+		if ( strpos($response, $needle) == false ) {
+			// $fbc_options['appId'] = 'INVALID APP ID';
+			$errors = 'ERROR! Invalid application ID. Please double check to make sure it is correct. Note that this is not the same thing as your Facebook user ID';
+		}
+	} else echo '<div class="error fade"><p><strong>' . __("Unable to verify application ID. This may be due to a network error. Ignore this warning if you know you have input the correct ID.") . '</strong></p></div>';
+	
 	if (empty($fbc_options['appId']) || empty($fbc_options['appSecret']))
 		echo '<div class="error"><p><strong>' . __('The Facebook comments box will not be included in your posts until you set a valid application ID and application secret.').'</strong></p>'.$id_help.'</div>';
 	elseif ($errors != false)
 		echo '<div class="error"><p><strong>' . __($errors) . '</strong></p>'.$id_help.'</div>';
 
 	$_loadversion = get_option('fbComments_xid');
-	// 2.1.2 loaded?
+	# 2.1.2 loaded?
 	$_loadversion = (strlen($_loadversion) < 1) ? 'loaded' : $_loadversion;
 ?>
 
-	<div class="updated">Version 2.1.2 XID: <?php if($_loadversion) echo $_loadversion; ?></div>
+	<div class="updated">XID from version 2.1.2: <?php if($_loadversion) echo $_loadversion; ?></div>
 	<div id="poststuff" class="postbox">
 		<h3><?php _e('Enable/Disable Facebook\'s New Comment System'); ?></h3>
 
@@ -103,7 +111,7 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 				</select>
 			</p>
 			<p><input type="checkbox" id="fbComments_v1plusv2" name="fbComments[v1plusv2]" value="1" <?php checked($fbc_options['v1plusv2'], 1 ); ?>>
-				<label for="fbComments_v1plusv2"> <?php _e('Display both v1 and v2 comments; ignores above setting (<b>warning: not pretty looking</b>)'); ?>
+				<label for="fbComments_v1plusv2"> <?php _e('Display both v1 and v2 comments; ignores above setting (<b>only way to have both new and old comments show up</b>)'); ?>
 				</label>
 			</p>
 			<?php /*
@@ -135,8 +143,13 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 				<label for="fbComments_hideWpComments"> <?php _e('Hide WordPress comments on posts/pages where Facebook commenting is enabled'); ?></label></p>
 
 			<p><input type="checkbox" id="fbComments_combineCommentCounts" name="fbComments[combineCommentCounts]" value="1" <?php checked($fbc_options['combineCommentCounts'], 1 ); ?> size="20">
-				<label for="fbComments_combineCommentCounts"> <?php _e('Combine WordPress and Facebook comment counts'); ?></label></p>
+				<label for="fbComments_combineCommentCounts"> <?php _e('Combine WordPress and Facebook comment counts (<em>only counts "v1 only" and "new", use below option if using "v2 only"</em>)'); ?></label></p>
 
+			<p><input type="checkbox" id="fbComments_fbCommentCount" name="fbComments[fbCommentCount]" value="1" <?php checked($fbc_options['fbCommentCount'], 1 ); ?>>
+				<label for="fbComments_fbCommentCount"> <?php _e('Enable native facebook comment count (<em>does nothing unless "v2 only" is selected</em>).'); ?>
+				</label>
+			</p>
+				
 			<p><input type="checkbox" id="fbComments_showDBWidget" name="fbComments[showDBWidget]" value="1" <?php checked($fbc_options['showDBWidget'], 1 ); ?>>
 				<label for="fbComments_newUser"> <?php _e('Show the Dashboard Recent Comments admin widget'); ?>
 				</label>
@@ -146,10 +159,191 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 				<label for="fbComments_enableCache"> <?php _e('Enable comment caching (<em>enable if site is loading slowly</em>).'); ?>
 				</label>
 			</p>
+			
+			<p><input type="checkbox" id="fbComments_darkSite" name="fbComments[darkSite]" value="1" <?php checked($fbc_options['darkSite'], 1 ); ?> size="20">
+				<label for="fbComments_darkSite"><?php _e('<em>*just added*</em> Use colors more easily visible on a <strong>dark</strong> website'); ?>
+				</label>
+			</p>
+
+			
 
 			<p><a href="https://developers.facebook.com/tools/comments/?id=<?php echo $fbc_options['appId']; ?>">
 			<img class="img" src="https://s-static.ak.facebook.com/rsrc.php/v1/yh/r/sFEt4HFKXwP.gif" style="top: -1px;" width="15" height="16" />
 			Moderation Settings</a> <!--<em><strong>(inline editing of these settings is in development)</strong></em> --></p>
+		</div>
+	</div>
+	
+	<div id="poststuff" class="postbox">
+		<h3><?php _e('v2 Comment Count Style'); ?></h3>	
+		<div class="inside">
+			<p><?php _e("Anything you type here will be passed as is (so make sure it's correct) to the 'style=' of the comment count container "); ?>
+				<input type="text" name="fbComments[v2ccstyle]" value="<?php echo $fbc_options['v2ccstyle']; ?>" size="90" /></p>
+		</div>
+	</div>
+	
+	<div id="poststuff" class="postbox">
+		<h3><?php _e('Like Button Settings'); ?></h3>
+		
+		<?php
+		$likebtn = "<iframe src='http://www.facebook.com/plugins/like.php?"
+			.'href=we8u.com/facebook-comments&amp;'
+			."layout={$fbc_options['like']['layout']}".'&amp;';
+		$likebtn .= ($fbc_options['like']['faces']) ? "show_faces=true" : "show_faces=false";
+		$likebtn .= '&amp;'
+			."width={$fbc_options['like']['width']}".'&amp;'
+			."action={$fbc_options['like']['verb']}".'&amp;'
+			."font={$fbc_options['like']['font']}".'&amp;'
+			."colorscheme={$fbc_options['like']['color']}"
+			."' scrolling='no' frameborder='0' style='{$fbc_options['like']['style']}' allowTransparency='true'></iframe>";
+			
+		$indexlikebtn = "<iframe src='http://www.facebook.com/plugins/like.php?"
+			.'href=we8u.com/&amp;'
+			."layout={$fbc_options['indexLikebtn']['layout']}".'&amp;';
+		$indexlikebtn .= ($fbc_options['indexLikebtn']['faces']) ? "show_faces=true" : "show_faces=false";
+		$indexlikebtn .= '&amp;'
+			."width={$fbc_options['indexLikebtn']['width']}".'&amp;'
+			."action={$fbc_options['indexLikebtn']['verb']}".'&amp;'
+			."font={$fbc_options['indexLikebtn']['font']}".'&amp;'
+			."colorscheme={$fbc_options['indexLikebtn']['color']}"
+			."' scrolling='no' frameborder='0' style='{$fbc_options['indexLikebtn']['style']}' allowTransparency='true'></iframe>";
+		?>
+		
+		<div class="inside">
+		<p><?php _e("Note, the style of the like button depends on the tag <code>&lt;meta property='og:type' content='article' /&gt;</code><br />
+			Here, the left button has <code>content='product'</code>, while the right has <code>content='article'</code><br />
+			<strong>click 'Update Options' to see the effect of changeing each's settings</strong>") ?>
+		</p>
+		<hr style="width:auto" />
+		<table><tr>
+			<td style="border-right: 1px dotted" VALIGN="top">
+			<div><p><?php 
+					if (!$fbc_options['hideFbLikeButton']) echo $likebtn;
+					else echo '<span style="font-size:1.2em; font-weight:bold">Hiding like button</span>';
+					?>
+				</p></div>
+			
+			<p><input type="checkbox" id="fbComments_hideFbLikeButton" name="fbComments[hideFbLikeButton]" value="1" <?php checked($fbc_options['hideFbLikeButton'], 1 ); ?> size="20">
+				<label for="fbComments_hideFbLikeButton"><?php _e(' Hide the Like button and text '); ?></label></p>
+		
+			<p><?php _e('Layout Sytle '); ?>
+				<select name="fbComments[like][layout]">
+					<option value="standard"<?php if ($fbc_options['like']['layout'] == 'standard') echo ' selected="selected"'; ?>>standard</option>
+					<option value="button_count"<?php if ($fbc_options['like']['layout'] == 'button_count') echo ' selected="selected"'; ?>>button_count</option>
+					<option value="box_count"<?php if ($fbc_options['like']['layout'] == 'box_count') echo ' selected="selected"'; ?>>box_count</option>
+				</select>
+			</p>
+			<p><input type="checkbox" id="fbComments_like_faces" name="fbComments[like][faces]" value="1" <?php checked($fbc_options['like']['faces'], 1 ); ?> size="20">
+				<label for="fbComments_like_faces"> <?php _e('Show profile pictures below like button for friends who "like"'); ?></label></p>
+			
+			<p><?php _e('Width '); ?>
+				<input type="text" name="fbComments[like][width]" value="<?php echo $fbc_options['like']['width']; ?>" size="10" /></p>
+				
+			<p><?php _e('Verb '); ?>
+				<select name="fbComments[like][verb]">
+					<option value="like"<?php if ($fbc_options['like']['verb'] == 'like') echo ' selected="selected"'; ?>>like</option>
+					<option value="recommend"<?php if ($fbc_options['like']['verb'] == 'recommend') echo ' selected="selected"'; ?>>recommend</option>
+				</select>
+			</p>
+			<p><?php _e('Font '); ?>
+				<select name="fbComments[like][font]">
+					<option <?php if ($fbc_options['like']['font'] == '') echo ' selected="selected"'; ?>></option>
+					<option value="arial"<?php if ($fbc_options['like']['font'] == 'arial') echo ' selected="selected"'; ?>>arial</option>
+					<option value="lucida+grande"<?php if ($fbc_options['like']['font'] == 'lucida+grande') echo ' selected="selected"'; ?>>lucida grande</option>
+					<option value="segoe+ui"<?php if ($fbc_options['like']['font'] == 'segoe+ui') echo ' selected="selected"'; ?>>segoe ui</option>
+					<option value="tahoma"<?php if ($fbc_options['like']['font'] == 'tahoma') echo ' selected="selected"'; ?>>tahoma</option>
+					<option value="trebuchet+ms"<?php if ($fbc_options['like']['font'] == 'trebuchet+ms') echo ' selected="selected"'; ?>>trebuchet ms</option>
+					<option value="verdana"<?php if ($fbc_options['like']['font'] == 'verdana') echo ' selected="selected"'; ?>>verdana</option>
+				</select>
+			</p>
+			<p><?php _e('Color Scheme '); ?>
+				<select name="fbComments[like][color]">
+					<option value="light"<?php if ($fbc_options['like']['color'] == 'light') echo ' selected="selected"'; ?>>light</option>
+					<option value="dark"<?php if ($fbc_options['like']['color'] == 'dark') echo ' selected="selected"'; ?>>dark</option>
+				</select>
+				<?php _e('<em>light for light backgrounds, dark for dark</em>'); ?>
+			</p>
+			
+			<p><?php _e('CSS Style <br />'); ?>
+				<input type="text" name="fbComments[like][style]" value="<?php echo $fbc_options['like']['style']; ?>" size="60" /></p>
+			</td>
+			
+			<td VALIGN="top">
+			
+			<div><p><?php 
+					if ($fbc_options['indexLikebtn']['display'] != 'none') echo $indexlikebtn;
+					else echo '<span style="font-size:1.2em; font-weight:bold">Hiding like button</span>';
+					?>
+				</p></div>
+			
+			<p><?php _e('Where to display a like button on each post on front page of site (index.php for most people) <br />'); ?>
+				<select name="fbComments[indexLikebtn][display]">
+					<option value="none"<?php if ($fbc_options['indexLikebtn']['display'] == 'none') echo ' selected="selected"'; ?>>don't</option>
+					<option value="top"<?php if ($fbc_options['indexLikebtn']['display'] == 'top') echo ' selected="selected"'; ?>>at the top of each post</option>
+					<option value="bottom"<?php if ($fbc_options['indexLikebtn']['display'] == 'bottom') echo ' selected="selected"'; ?>>at the bottom of each post</option>
+				</select>
+			</p>
+			
+			<p><select name="fbComments[indexLikebtn][layout]">
+					<option value="standard"<?php if ($fbc_options['indexLikebtn']['layout'] == 'standard') echo ' selected="selected"'; ?>>standard</option>
+					<option value="button_count"<?php if ($fbc_options['indexLikebtn']['layout'] == 'button_count') echo ' selected="selected"'; ?>>button_count</option>
+					<option value="box_count"<?php if ($fbc_options['indexLikebtn']['layout'] == 'box_count') echo ' selected="selected"'; ?>>box_count</option>
+				</select></p>
+				
+			<p><input type="checkbox" id="fbComments_indexLikebtn_faces" name="fbComments[indexLikebtn][faces]" value="1" <?php checked($fbc_options['indexLikebtn']['faces'], 1 ); ?> size="20">
+				<label for="fbComments_indexLikebtn_faces"> <?php _e('Show profile pictures'); ?></label></p>
+			
+			<p><?php _e('Width '); ?>
+				<input type="text" name="fbComments[indexLikebtn][width]" value="<?php echo $fbc_options['indexLikebtn']['width']; ?>" size="10" /></p>
+				
+			<p><?php _e('Verb '); ?>
+				<select name="fbComments[indexLikebtn][verb]">
+					<option value="like"<?php if ($fbc_options['indexLikebtn']['verb'] == 'like') echo ' selected="selected"'; ?>>like</option>
+					<option value="recommend"<?php if ($fbc_options['indexLikebtn']['verb'] == 'recommend') echo ' selected="selected"'; ?>>recommend</option>
+				</select>
+			</p>
+			<p><?php _e('Font '); ?>
+				<select name="fbComments[indexLikebtn][font]">
+					<option <?php if ($fbc_options['indexLikebtn']['font'] == '') echo ' selected="selected"'; ?>></option>
+					<option value="arial"<?php if ($fbc_options['indexLikebtn']['font'] == 'arial') echo ' selected="selected"'; ?>>arial</option>
+					<option value="lucida+grande"<?php if ($fbc_options['indexLikebtn']['font'] == 'lucida+grande') echo ' selected="selected"'; ?>>lucida grande</option>
+					<option value="segoe+ui"<?php if ($fbc_options['indexLikebtn']['font'] == 'segoe+ui') echo ' selected="selected"'; ?>>segoe ui</option>
+					<option value="tahoma"<?php if ($fbc_options['indexLikebtn']['font'] == 'tahoma') echo ' selected="selected"'; ?>>tahoma</option>
+					<option value="trebuchet+ms"<?php if ($fbc_options['indexLikebtn']['font'] == 'trebuchet+ms') echo ' selected="selected"'; ?>>trebuchet ms</option>
+					<option value="verdana"<?php if ($fbc_options['indexLikebtn']['font'] == 'verdana') echo ' selected="selected"'; ?>>verdana</option>
+				</select>
+			</p>
+			<p><?php _e('Color Scheme '); ?>
+				<select name="fbComments[indexLikebtn][color]">
+					<option value="light"<?php if ($fbc_options['indexLikebtn']['color'] == 'light') echo ' selected="selected"'; ?>>light</option>
+					<option value="dark"<?php if ($fbc_options['indexLikebtn']['color'] == 'dark') echo ' selected="selected"'; ?>>dark</option>
+				</select>
+			</p>
+			
+			<p><?php _e('CSS Style <span style="font-size:.8em"><em>(min height is 62px if displaying profile pics or using "box_count", 25px otherwise)</em></span><br />'); ?>
+				<input type="text" name="fbComments[indexLikebtn][style]" value="<?php echo $fbc_options['indexLikebtn']['style']; ?>" size="60" /></p>
+			
+			</td>
+		</tr></table>
+		</div>
+	</div>
+	
+	<div id="poststuff" class="postbox">
+		<h3><?php _e('"v1 only" Settings'); ?></h3>
+
+		<div class="inside">
+			<h3><?php _e('Comments Box Settings'); ?></h3>
+			<p><input type="checkbox" id="fbComments_reverseOrder" name="fbComments[reverseOrder]" value="1" <?php checked($fbc_options['reverseOrder'], 1 ); ?> size="20">
+				<label for="fbComments_reverseOrder"><?php _e(' Reverse the order of the Facebook comments section'); ?></label>
+				<em><?php _e('  (Comments will appear in chronological order and the composer will be at the bottom)'); ?></em></p>
+		
+			<br />
+			<h3><?php _e('Style Settings'); ?></h3>
+			<p><?php _e('Container Styles: '); ?><input type="text" name="fbComments[containerCss]" value="<?php echo $fbc_options['containerCss']; ?>" size="70">
+				<em><?php _e(' (These styles will be applied to a &lt;div&gt; element wrapping the comments box)'); ?></em></p>
+		
+			<p><input type="checkbox" id="fbComments_noBox" name="fbComments[noBox]" value="1" <?php checked($fbc_options['noBox'], 1 ); ?> size="20">
+				<label for="fbComments_noBox"><?php _e(' Remove grey box surrounding Facebook comments'); ?></label></p>
+			
 		</div>
 	</div>
 
@@ -199,30 +393,17 @@ if (version_compare(phpversion(), FBCOMMENTS_REQUIRED_PHP_VER) == -1) {
 			<p><input type="checkbox" id="fbComments_publishToWall" name="fbComments[publishToWall]" value="1" <?php checked($fbc_options['publishToWall'], 1 ); ?> size="20">
 				<label for="fbComments_publishToWall"><?php _e(' Check the <strong>Post comment to my Facebook profile</strong> box by default'); ?></label></p>
 
-			<p><input type="checkbox" id="fbComments_reverseOrder" name="fbComments[reverseOrder]" value="1" <?php checked($fbc_options['reverseOrder'], 1 ); ?> size="20">
-				<label for="fbComments_reverseOrder"><?php _e(' Reverse the order of the Facebook comments section'); ?></label>
-				<em><?php _e('  (Comments will appear in chronological order and the composer will be at the bottom)'); ?></em></p>
+			
 
-			<p><input type="checkbox" id="fbComments_hideFbLikeButton" name="fbComments[hideFbLikeButton]" value="1" <?php checked($fbc_options['hideFbLikeButton'], 1 ); ?> size="20">
-				<label for="fbComments_hideFbLikeButton"><?php _e(' Hide the Like button and text (only applicable if not using facebook\'s new comment system)'); ?></label></p>
 		</div>
 	</div>
 
 	<div id="poststuff" class="postbox">
 		<h3><?php _e('Style Settings'); ?></h3>
-
+		
 		<div class="inside">
-			<p><?php _e('Container Styles: '); ?><input type="text" name="fbComments[containerCss]" value="<?php echo $fbc_options['containerCss']; ?>" size="70">
-				<em><?php _e(' (These styles will be applied to a &lt;div&gt; element wrapping the comments box)'); ?></em></p>
-
 			<p><?php _e('Title Styles: '); ?><input type="text" name="fbComments[titleCss]" value="<?php echo $fbc_options['titleCss']; ?>" size="70">
 				<em><?php _e(' (These styles will be applied to the title text above the comments box)'); ?></em></p>
-
-			<p><input type="checkbox" id="fbComments_darkSite" name="fbComments[darkSite]" value="1" <?php checked($fbc_options['darkSite'], 1 ); ?> size="20">
-				<label for="fbComments_darkSite"><?php _e(' Use colors more easily visible on a darker website'); ?></label><em><?php _e('  (To modify the colors used for darker sites, manually edit the <strong>facebook-comments-darksite.css</strong> stylesheet)'); ?></em></p>
-
-			<p><input type="checkbox" id="fbComments_noBox" name="fbComments[noBox]" value="1" <?php checked($fbc_options['noBox'], 1 ); ?> size="20">
-				<label for="fbComments_noBox"><?php _e(' Remove grey box surrounding Facebook comments'); ?></label></p>
 		</div>
 	</div>
 

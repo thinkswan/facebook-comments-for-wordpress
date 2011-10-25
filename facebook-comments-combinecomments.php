@@ -14,13 +14,18 @@ function fbComments_getCachedCommentCount($xid, $wpCommentCount) {
 
 function fbComments_getProperCommentCount($fbCommentCount=0, $wpCommentCount=0) {
 	fbComments_log('In ' . __FUNCTION__ . "(fbCommentCount=$fbCommentCount, wpCommentCount=$wpCommentCount)");
-	global $fbc_options;
-
-	// If the WordPress comments are hidden, just return the Facebook comments count
+	global $fbc_options, $wp_query, $wpdb;
+	$postId = $wp_query->post->ID;
+	
+	// $comments = $wpdb->get_row("SELECT comment_count as count FROM wp_posts WHERE ID = '$postId'");
+	// $commentcount = $comments->count;
+	// wp_reset_query();
+	# If the WordPress comments are hidden, just return the Facebook comments count
 	if ($fbc_options['hideWpComments']) {
+		// if (!comments_open()) return $wpCommentCount;
 		fbComments_log("    Returning a Facebook comment count of $fbCommentCount");
 		return $fbCommentCount;
-	// If commenting is closed on this post or we shouldn't be displaying Facebook comments due to settings, just return the WordPress comments count
+	# If commenting is closed on this post or we shouldn't be displaying Facebook comments due to settings, just return the WordPress comments count
 	} elseif (!comments_open() ||
 			  ($fbc_options['displayPagesOrPosts'] == 'pages') && (!is_page()) ||
 			  ($fbc_options['displayPagesOrPosts'] == 'posts') && (!is_single())) {
@@ -75,7 +80,7 @@ function fbComments_combineCommentCounts($value) {
 	$xid = $fbc_options['xid'] . "_post$postId";
 
 	// Return the cached comment count (if it exists)
-	if (get_option("fbComments_commentCount_$xid")) {
+	if (get_option("fbComments_commentCount_$xid") !== null) {
 		return fbComments_getCachedCommentCount($xid, $value);
 	}
 

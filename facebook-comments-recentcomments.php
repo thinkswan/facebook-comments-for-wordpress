@@ -36,6 +36,7 @@
 		$result = $fb->api($query);
 
 		$comments = $result;
+		if (!is_array($comments)) { print_r('No&nbsp;response&nbsp;from&nbsp;facebook.com'); return; }
 		$ncomms = sizeof($comments[0]['fql_result_set']);
 		$dcomms = $ncomms < $fbc_options['dashNumComments'] ? $ncomms : $fbc_options['dashNumComments'];
 
@@ -134,7 +135,7 @@
 
 							</span>'.
 							"<script>
-							$('#deletecomm".$i."').click(function(data) {
+							jQuery('#deletecomm".$i."').click(function(data) {
 								FB.api({
 										method: 'comments.remove',"
 										.'comment_id: "'.$comments[$i]['id'].'", '
