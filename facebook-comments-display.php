@@ -36,7 +36,7 @@
 			fbComments_storeAccessToken();
 
 			echo "\n<!-- Facebook Comments for WordPress v" . FBCOMMENTS_VER . " by " . FBCOMMENTS_AUTHOR . " (" . FBCOMMENTS_WEBPAGE . ") -->\n
-<a name='facebook-comments'></a>\n";
+<a name='comments'></a><a name='facebook-comments'></a>\n";
 
 	    	if ($fbc_options['includeFbJs']) {
 	    		fbComments_includeFbJs();
@@ -296,10 +296,5 @@ echo "</div>\n";
 	function fbc_facebook_comment_count($ccount='') {
 		global $fbc_options, $wp_query;
 	    $postUrl = get_permalink($wp_query->post->ID);
-		
-		echo "</a><iframe src='http://www.facebook.com/plugins/comments.php?href=$postUrl&permalink=1'"
-				." scrolling='no' frameborder='0' style='{$fbc_options['v2ccstyle']}'"
-				." allowTransparency='true'>
-			</iframe><a>";
-		// echo "\tcmt</a><fb:comments-count href='$postUrl'></fb:comments-count> comments<a>";
+        echo '<fb:comments-count href='$postUrl'></fb:comments-count> comments';
 	}
