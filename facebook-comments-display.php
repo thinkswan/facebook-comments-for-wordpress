@@ -296,5 +296,5 @@ echo "</div>\n";
 	function fbc_facebook_comment_count($ccount='') {
 		global $fbc_options, $wp_query;
 	    $postUrl = get_permalink($wp_query->post->ID);
-        echo "<span data-href='$postUrl'></span> <span class='fb_comments_text'>comments</span>";
+        echo "<span class='fb_comments_link_text'><span data-href='$postUrl'></span> <span class='fb_comments_text'>comments</span></span>";
 	}
