@@ -171,8 +171,16 @@
 		});
     }
 
-    FB.Event.subscribe('comment.create', addedComment);
-    FB.Event.subscribe('comment.remove', removedComment);
+    // Wait for FB to load and then subscribe
+    var subscribe = function() {
+        if (typeof(FB) != 'undefined' && FB != null) {
+            FB.Event.subscribe('comment.create', addedComment);
+            FB.Event.subscribe('comment.remove', removedComment);
+        } else {
+            setTimeout(subscribe, 1000);
+        }
+    };
+    setTimeout(subscribe, 200);
 </script>\n";
 	}
 
