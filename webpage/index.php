@@ -104,7 +104,7 @@
             </script>
 
             <p class="comments">Facebook comments:</p>
-            <fb:comments xid='f2059fjvg309568h' numposts='10' width='819' publish_feed='false'></fb:comments>
+            <fb:comments xid='f2059fjvg309568h' numposts='10' width='819' publish_feed='false' migrated='1'></fb:comments>
 
             <!-- Usage Screenshots -->
             <br class="clear" />
