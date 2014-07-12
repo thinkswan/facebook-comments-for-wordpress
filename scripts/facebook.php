@@ -487,7 +487,11 @@ class Facebook
   public function api(/* polymorphic */) {
     $args = func_get_args();
     if (is_array($args[0])) {
-      return $this->_restserver($args[0]);
+		try { return $this->_restserver($args[0]); }
+		catch (Exception $e) { 
+			self::errorLog("$e");
+			return 'Request to facebook timed out';
+		}
     } else {
       return call_user_func_array(array($this, '_graph'), $args);
     }
@@ -612,7 +616,7 @@ class Facebook
     $result = curl_exec($ch);
 
     if (curl_errno($ch) == 60) { // CURLE_SSL_CACERT
-      self::errorLog('Invalid or no certificate authority found, using bundled information');
+      // self::errorLog('Invalid or no certificate authority found, using bundled information');
       curl_setopt($ch, CURLOPT_CAINFO,
                   dirname(__FILE__) . '/fb_ca_chain_bundle.crt');
       $result = curl_exec($ch);
@@ -627,7 +631,8 @@ class Facebook
         ),
       ));
       curl_close($ch);
-      throw $e;
+      self::errorLog("$e");
+	  return 'Request to facebook timed out';
     }
     curl_close($ch);
     return $result;
